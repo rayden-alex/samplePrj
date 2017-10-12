@@ -3,10 +3,11 @@ package myProg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Program {
-    private static final Logger log = Logger.getLogger(Program.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Program.class);
 
     public static void main(String[] args) {
         Calc calc = new Calc();
@@ -23,7 +24,7 @@ public class Program {
         Arrays.sort(sortedArray, Comparator.comparing(Person::getName));
 
         System.out.println("logggggggg");
-        log.severe("Test logger message");
+        log.info("Test logger message");
 
 
     }

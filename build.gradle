@@ -29,6 +29,11 @@ ext.junitJupiterVersion = '5.0.1'
 ext.log4jVersion = '2.9.0'
 
 dependencies {
+    //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
+
+
+
     // JUnit Jupiter API and TestEngine implementation
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
