@@ -4,11 +4,9 @@
     <property name="DEV_HOME" value="d:/java/prj/samplePrj"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-            </Pattern>
-        </layout>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%logger] - %msg%n</pattern>
+        </encoder>
     </appender>
 
     <appender name="FILE-AUDIT"
@@ -16,7 +14,7 @@
         <file>${DEV_HOME}/debug.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+                %d{yyyy-MM-dd HH:mm:ss} %-5level [%logger] - %msg%n
             </Pattern>
         </encoder>
 
@@ -34,7 +32,7 @@
         <file>${DEV_HOME}/error.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+                %d{yyyy-MM-dd HH:mm:ss} %-5level [%logger] - %msg%n
             </Pattern>
         </encoder>
 
@@ -48,7 +46,7 @@
     </appender>
 
     <!-- Send logs to both console and file audit -->
-    <logger name="Program" level="debug"
+    <logger name="myProg.Program" level="debug"
             additivity="false">
         <appender-ref ref="FILE-AUDIT"/>
         <appender-ref ref="STDOUT"/>
@@ -56,6 +54,10 @@
 
     <root level="error">
         <appender-ref ref="FILE-ERROR"/>
+    </root>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>

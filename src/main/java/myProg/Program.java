@@ -35,8 +35,8 @@ public class Program {
 
         AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
 
-        System.out.println(abonDao.findFioById(21L));
-        System.out.println(abonDao.findFioById(25L));
+        abonDao.findFioById(21L).forEach( abon ->  log.debug(abon.toString()));
+        abonDao.findFioById(25L).forEach( abon ->  log.error(abon.toString()));
 
         System.out.println("FINISH");
 
