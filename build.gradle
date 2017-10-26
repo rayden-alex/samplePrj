@@ -14,6 +14,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -28,11 +29,18 @@ ext.junitPlatformVersion = '1.0.1'
 ext.junitJupiterVersion = '5.0.1'
 ext.log4jVersion = '2.9.0'
 
+
 dependencies {
+    compile group: 'org.springframework', name: 'spring-context', version: '5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '5.0.1.RELEASE'
+
+    compile group: 'org.apache.tomcat', name: 'tomcat-dbcp', version: '8.5.23'
+    compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.0.2'
+
+    compileOnly 'org.projectlombok:lombok:1.16.18'
+
     //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
-
-
 
     // JUnit Jupiter API and TestEngine implementation
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")

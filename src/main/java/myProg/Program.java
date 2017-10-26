@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 public class Program {
     private static final Logger log = LoggerFactory.getLogger(Program.class);
@@ -25,6 +26,19 @@ public class Program {
 
         System.out.println("logggggggg");
         log.info("Test logger message");
+
+
+
+        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
+        ctx.load("classpath:META-INF/spring/app-context-annotation.xml");
+        ctx.refresh();
+
+        AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
+
+        System.out.println(abonDao.findFioById(21L));
+        System.out.println(abonDao.findFioById(25L));
+
+        System.out.println("FINISH");
 
 
     }
