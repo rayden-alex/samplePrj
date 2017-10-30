@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.Connection;
 
@@ -23,6 +24,12 @@ public class DataSourceConfig {
 
     @Value("${jdbc.password}")
     private String password;
+
+
+    @Bean(name = "namedParameterJdbcTemplate")
+    public NamedParameterJdbcTemplate jdbcTemplate() {
+        return new NamedParameterJdbcTemplate(dataSource());
+    }
 
     @Bean(name = "dataSource", destroyMethod = "close")
     public BasicDataSource dataSource() {

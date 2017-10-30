@@ -2,6 +2,7 @@ package myProg;
 
 import java.util.List;
 
+
 public interface AbonDao {
     List<Abon> findAll();
 

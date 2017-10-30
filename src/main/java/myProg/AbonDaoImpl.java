@@ -1,14 +1,27 @@
 package myProg;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
 
+@Repository("abonDaoBean")
 @Slf4j
-public class AbonDaoImpl extends JdbcDaoSupport implements AbonDao {
+public class AbonDaoImpl implements AbonDao {
+
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public AbonDaoImpl(@Qualifier("namedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public List<Abon> findAll() {
@@ -22,23 +35,24 @@ public class AbonDaoImpl extends JdbcDaoSupport implements AbonDao {
 
     @Override
     public List<Abon> findFioById(Long id) {
-        JdbcTemplate jt = getJdbcTemplate();
-        Objects.requireNonNull(jt);
+        Objects.requireNonNull(jdbcTemplate);
 
-        return jt.query("SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID = ?",
+        final String SQL = "SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID = :ID";
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ID", id);
 
-                ps -> ps.setLong(1, id),
+        return jdbcTemplate.query(SQL, namedParameters, getAbonRowMapper());
 
-                (rs, rowNum) -> {
-                    Abon abon = new Abon();
+    }
 
-                    abon.setId(rs.getLong("ID"));
-                    abon.setFio(rs.getString("FIO"));
-                    abon.setPhone(rs.getString("PHONE_LOCAL"));
+    private RowMapper<Abon> getAbonRowMapper() {
+        return (rs, rowNum) -> {
+            Abon abon = new Abon();
 
-                    return abon;
-                }
-        );
+            abon.setId(rs.getLong("ID"));
+            abon.setFio(rs.getString("FIO"));
+            abon.setPhone(rs.getString("PHONE_LOCAL"));
 
+            return abon;
+        };
     }
 }
