@@ -1,23 +1,14 @@
 package myProg;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
-@Repository("abonDaoBean")
-public class AbonDaoImpl implements AbonDao {
-    private static final Logger LOG = LoggerFactory.getLogger(AbonDaoImpl.class);
-
-    @Autowired()
-    @Qualifier("dataSourceBean")
-    private DataSource dataSource;
+@Slf4j
+public class AbonDaoImpl extends JdbcDaoSupport implements AbonDao {
 
     @Override
     public List<Abon> findAll() {
@@ -31,9 +22,23 @@ public class AbonDaoImpl implements AbonDao {
 
     @Override
     public List<Abon> findFioById(Long id) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("ID", id);
+        JdbcTemplate jt = getJdbcTemplate();
+        Objects.requireNonNull(jt);
 
-        return new SelectAbonById(dataSource).executeByNamedParam(paramMap);
+        return jt.query("SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID = ?",
+
+                ps -> ps.setLong(1, id),
+
+                (rs, rowNum) -> {
+                    Abon abon = new Abon();
+
+                    abon.setId(rs.getLong("ID"));
+                    abon.setFio(rs.getString("FIO"));
+                    abon.setPhone(rs.getString("PHONE_LOCAL"));
+
+                    return abon;
+                }
+        );
+
     }
 }

@@ -3,10 +3,10 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.+'
     }
 }
 
@@ -19,14 +19,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 
 ext.junit4Version = '4.12'
 ext.junitVintageVersion = '4.12.1'
 ext.junitPlatformVersion = '1.0.1'
-ext.junitJupiterVersion = '5.0.1'
+ext.junitJupiterVersion = '5.0.+'
 ext.log4jVersion = '2.9.0'
 
 
@@ -38,6 +38,12 @@ dependencies {
     compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.0.2'
 
     compileOnly 'org.projectlombok:lombok:1.16.18'
+
+    // It is not necessary nor recommended to add JSR 305 dependency in project classpath
+    // to take advantage of Spring null-safe API. Only projects like Spring-based libraries
+    // using null-safety annotations in their codebase should add com.google.code.findbugs:jsr305:3.0.2
+    // with compileOnly Gradle configuration or Maven provided scope to avoid compile warnings.
+//    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
     //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
@@ -51,7 +57,7 @@ dependencies {
     //testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 
     // To avoid compiler warnings about @API annotations in JUnit code
-    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+    testCompileOnly('org.apiguardian:apiguardian-api:1.0.+')
 
     // To use Log4J's LogManager
     //testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")

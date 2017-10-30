@@ -2,6 +2,7 @@ package myProg;
 
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
+import org.springframework.lang.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -17,6 +18,8 @@ public class SelectAbonById extends MappingSqlQuery<Abon> {
         super.declareParameter(new SqlParameter("ID", Types.BIGINT));
     }
 
+    @Nullable
+    @Override
     protected Abon mapRow(ResultSet rs, int rowNum) throws SQLException {
         Abon abon = new Abon();
 

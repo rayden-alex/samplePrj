@@ -1,15 +1,15 @@
 package myProg;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.GenericXmlApplicationContext;
 
+@Slf4j
 public class Program {
-    private static final Logger log = LoggerFactory.getLogger(Program.class);
-
     public static void main(String[] args) {
         Calc calc = new Calc();
         System.out.println(calc.add(23, 34));
@@ -28,15 +28,13 @@ public class Program {
         log.info("Test logger message");
 
 
-
-        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-        ctx.load("classpath:META-INF/spring/app-context-annotation.xml");
-        ctx.refresh();
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
 
         AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
 
-        abonDao.findFioById(21L).forEach( abon ->  log.debug(abon.toString()));
-        abonDao.findFioById(25L).forEach( abon ->  log.error(abon.toString()));
+        abonDao.findFioById(21L).forEach(abon -> log.debug("{}", abon));
+        abonDao.findFioById(25L).forEach(abon -> log.error(abon.toString()));
+        log.info("");
 
         System.out.println("FINISH");
 
