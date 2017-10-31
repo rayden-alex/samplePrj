@@ -39,7 +39,7 @@ public class DataSourceConfig {
         ds.setUrl(url);
         ds.setUsername(username);
         ds.setPassword(password);
-        ds.setConnectionProperties("encoding=UTF8");
+        ds.addConnectionProperty("encoding","UTF8");
         ds.setDefaultTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
         return ds;

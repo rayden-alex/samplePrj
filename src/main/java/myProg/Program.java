@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+
 @Slf4j
 public class Program {
     public static void main(String[] args) {
@@ -25,19 +26,47 @@ public class Program {
         Arrays.sort(sortedArray, Comparator.comparing(Person::getName));
 
         System.out.println("logggggggg");
-        log.info("Test logger message");
+
 
 
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
+        log.info("ApplicationContext is UP");
 
         AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
 
-        abonDao.findFioById(21L).forEach(abon -> log.debug("{}", abon));
-        abonDao.findFioById(25L).forEach(abon -> log.error(abon.toString()));
-        log.info("");
+                try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        abonDao.findAbonById(21L).forEach(abon -> log.debug("{}", abon));
+         log.error("Count={}", abonDao.findAbonById(1000000L).size());
 
-        System.out.println("FINISH");
 
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        log.info("----------------");
+
+        try (AbonWriteToFileCallbackHandler rch = new AbonWriteToFileCallbackHandler()) {
+            abonDao.writeFioById(1000000L, rch);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        log.info("FINISH");
+
+
+
+        try {
+            Thread.sleep(1000 * 20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
