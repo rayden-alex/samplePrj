@@ -1,6 +1,7 @@
 package myProg;
 
 import lombok.extern.slf4j.Slf4j;
+import myProg.jpa.AbonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -11,6 +12,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -20,8 +24,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AbonDaoImpl implements AbonDao {
 
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final JdbcStream jdbcStream;
+
+
+    private EntityManager entityManager;
+
+    @PersistenceContext
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Autowired
     public AbonDaoImpl(@Qualifier("namedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
@@ -30,8 +43,10 @@ public class AbonDaoImpl implements AbonDao {
     }
 
     @Override
-    public List<Abon> findAll() {
-        return null;
+    public List<AbonEntity> findAll() {
+        Query query = entityManager.createQuery("from AbonEntity as a where a.id < :param");
+        query.setParameter("param", 100L);
+        return query.getResultList();
     }
 
     @Override

@@ -28,6 +28,11 @@ public class AbonWriteToFileCallbackHandler implements RowCallbackHandler, AutoC
             open();
         }
 
+//        if (rs.getFetchSize() < 1000 && rs.getRow() > 100 ) {
+//            rs.setFetchSize(1000);
+//        }
+
+
         try {
             Abon abon = new Abon();
 

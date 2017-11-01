@@ -1,12 +1,13 @@
 package myProg;
 
+import myProg.jpa.AbonEntity;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.util.List;
 
 
 public interface AbonDao {
-    List<Abon> findAll();
+    List<AbonEntity> findAll();
 
     List<Abon> findByFio(String fio);
 

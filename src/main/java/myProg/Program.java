@@ -34,39 +34,58 @@ public class Program {
 
         AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
 
-                try {
-            Thread.sleep(1000 * 10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        log.error(abonDao.findAll().toString());
+
+//                try {
+//            Thread.sleep(1000 * 10);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 //        abonDao.findAbonById(21L).forEach(abon -> log.debug("{}", abon));
-         log.error("Count={}", abonDao.findAbonById(1000000L).size());
+//         log.error("Count={}", abonDao.findAbonById(1000000L).size());
 
-
-        try {
-            Thread.sleep(1000 * 10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        log.info("----------------");
-
-        try (AbonWriteToFileCallbackHandler rch = new AbonWriteToFileCallbackHandler()) {
-            abonDao.writeFioById(1000000L, rch);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        log.info("FINISH");
-
-
-
-        try {
-            Thread.sleep(1000 * 20);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Thread.sleep(1000 * 10);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        log.info("----------------");
+//        //log.error("Count={}", abonDao.findAbonById(1000000L).size());
+//
+//        try (AbonWriteToFileCallbackHandler rch = new AbonWriteToFileCallbackHandler()) {
+//            abonDao.writeFioById(10_000L, rch);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.gc();
+//
+//        try {
+//            Thread.sleep(1000 * 10);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        log.info("----------------");
+//        //log.error("Count={}", abonDao.findAbonById(1000000L).size());
+//
+//        try (AbonWriteToFileCallbackHandler rch = new AbonWriteToFileCallbackHandler()) {
+//            abonDao.writeFioById(1_000_000L, rch);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.gc();
+//
+//        log.info("FINISH");
+//
+//
+//
+//        try {
+//            Thread.sleep(1000 * 20);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 }
