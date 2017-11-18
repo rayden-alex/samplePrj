@@ -1,6 +1,7 @@
 package myProg;
 
 import lombok.extern.slf4j.Slf4j;
+import myProg.services.AbonService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -32,9 +33,9 @@ public class Program {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         log.info("ApplicationContext is UP");
 
-        AbonDao abonDao = ctx.getBean("abonDaoBean", AbonDao.class);
+        AbonService abonService = ctx.getBean("abonServiceImpl", AbonService.class);
 
-        log.error(abonDao.findAll().toString());
+        log.error(abonService.count().toString());
 
 //                try {
 //            Thread.sleep(1000 * 10);

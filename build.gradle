@@ -34,9 +34,18 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version: '5.0.1.RELEASE'
     //compile group: 'org.springframework', name: 'spring-jdbc', version: '5.0.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-test', version: '5.0.1.RELEASE'
 
     compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.23'
     compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.0.2'
+
+
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
+    testCompile(group: 'org.dbunit', name: 'dbunit', version: '+') {
+        exclude group: 'junit'
+    }
+
+    testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
 
     compileOnly 'org.projectlombok:lombok:1.16.18'
 
@@ -51,6 +60,9 @@ dependencies {
 
 
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.12.Final'
+    compile group: 'org.hibernate', name: 'hibernate-java8', version: '5.2.12.Final'
+
+
 
     // JUnit Jupiter API and TestEngine implementation
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
@@ -69,7 +81,12 @@ dependencies {
 
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+    //allows us to run tests and test suites in a JUnit 4 environment.
     //testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
+
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.+'
+    //testCompile 'org.assertj:assertj-db:1.2.0'
 }
 
 junitPlatform {

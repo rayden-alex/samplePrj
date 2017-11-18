@@ -3,14 +3,14 @@ package myProg.jpa;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ABON")
 @ToString
 public class AbonEntity {
-    private long id;
+    private Long  id;
     private Short region;
     private Integer account;
     private String phoneLocal;
@@ -25,19 +25,19 @@ public class AbonEntity {
     private String room;
     private String pind;
     private String address;
-    private Date dateClose;
-    private Timestamp dateR;
+    private LocalDate dateClose;
+    private LocalDateTime dateR;
     private String dateCloseTxt;
     private String dateRTxt;
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
+    public Long  getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -183,21 +183,21 @@ public class AbonEntity {
 
     @Basic
     @Column(name = "DATE_CLOSE")
-    public Date getDateClose() {
+    public LocalDate getDateClose() {
         return dateClose;
     }
 
-    public void setDateClose(Date dateClose) {
+    public void setDateClose(LocalDate dateClose) {
         this.dateClose = dateClose;
     }
 
     @Basic
     @Column(name = "DATE_R")
-    public Timestamp getDateR() {
+    public LocalDateTime getDateR() {
         return dateR;
     }
 
-    public void setDateR(Timestamp dateR) {
+    public void setDateR(LocalDateTime dateR) {
         this.dateR = dateR;
     }
 
@@ -224,11 +224,10 @@ public class AbonEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AbonEntity)) return false;
 
         AbonEntity that = (AbonEntity) o;
 
-        if (id != that.id) return false;
         if (region != null ? !region.equals(that.region) : that.region != null) return false;
         if (account != null ? !account.equals(that.account) : that.account != null) return false;
         if (phoneLocal != null ? !phoneLocal.equals(that.phoneLocal) : that.phoneLocal != null) return false;
@@ -246,15 +245,12 @@ public class AbonEntity {
         if (dateClose != null ? !dateClose.equals(that.dateClose) : that.dateClose != null) return false;
         if (dateR != null ? !dateR.equals(that.dateR) : that.dateR != null) return false;
         if (dateCloseTxt != null ? !dateCloseTxt.equals(that.dateCloseTxt) : that.dateCloseTxt != null) return false;
-        if (dateRTxt != null ? !dateRTxt.equals(that.dateRTxt) : that.dateRTxt != null) return false;
-
-        return true;
+        return dateRTxt != null ? dateRTxt.equals(that.dateRTxt) : that.dateRTxt == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (region != null ? region.hashCode() : 0);
+        int result = region != null ? region.hashCode() : 0;
         result = 31 * result + (account != null ? account.hashCode() : 0);
         result = 31 * result + (phoneLocal != null ? phoneLocal.hashCode() : 0);
         result = 31 * result + (phoneIntern != null ? phoneIntern.hashCode() : 0);
@@ -275,3 +271,22 @@ public class AbonEntity {
         return result;
     }
 }
+
+
+// Чтобы работать с полями типа LocalDateTime (Java 8)
+// надо подключить dependency   compile group: 'org.hibernate', name: 'hibernate-java8', version: '5.2.12.Final'
+// или написать свой attribute converter :
+
+//@Converter(autoApply = true)
+//public class LocalDateTimeAttributeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
+//
+//    @Override
+//    public Timestamp convertToDatabaseColumn(LocalDateTime locDateTime) {
+//        return (locDateTime == null ? null : Timestamp.valueOf(locDateTime));
+//    }
+//
+//    @Override
+//    public LocalDateTime convertToEntityAttribute(Timestamp sqlTimestamp) {
+//        return (sqlTimestamp == null ? null : sqlTimestamp.toLocalDateTime());
+//    }
+//}

@@ -33,9 +33,8 @@ public interface BaseDAO<T extends Model<ID>, ID extends Serializable> extends E
 
     default List<T> findByQueryWithParams(String jpqlQueryString, Map<String, Object> params) {
         TypedQuery<T> query = getEntityManager().createQuery(jpqlQueryString, getEntityClass());
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            query.setParameter(entry.getKey(), entry.getValue());
-        }
+        params.forEach(query::setParameter);
+
         return query.getResultList();
     }
 }
