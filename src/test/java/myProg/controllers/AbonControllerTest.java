@@ -34,7 +34,7 @@ class AbonControllerTest {
                 .andDo(print())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].account").value(Integer.valueOf(500122)));
+                .andExpect(jsonPath("$[0].account").value(500122));
         //  .andExpect(content().string(containsString("Spring={};")));
     }
 }
