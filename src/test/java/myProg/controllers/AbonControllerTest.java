@@ -3,7 +3,6 @@ package myProg.controllers;
 
 import myProg.AppConfig;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringJUnitWebConfig(AppConfig.class)
 @ActiveProfiles({"default", "dev"})
-//@WebMvcTest
 class AbonControllerTest {
     private MockMvc mockMvc;
 
@@ -37,7 +35,7 @@ class AbonControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].account").value(Integer.valueOf(500122)));
-              //  .andExpect(content().string(containsString("Spring={};")));
+        //  .andExpect(content().string(containsString("Spring={};")));
     }
 }
 
