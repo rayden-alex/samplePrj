@@ -31,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 @TestExecutionListeners(value = {
         //  DependencyInjectionTestExecutionListener.class, //  по дефолту этот Listener и так подключен, но если нужно подключить еще что-то, то надо указывать полный список или менять mergeMode на MERGE_WITH_DEFAULTS
         DbUnitTestExecutionListener.class
-}, mergeMode = TestExecutionListeners.MergeMode.REPLACE_DEFAULTS)
+}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 
 @ActiveProfiles({"default", "dev"})
 //@Disabled
