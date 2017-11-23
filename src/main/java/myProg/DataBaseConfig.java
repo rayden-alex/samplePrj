@@ -42,7 +42,7 @@ public class DataBaseConfig {
     }
 
     @Profile("dev")
-    @Bean(destroyMethod = "close")
+    @Bean(name = "dataSource", destroyMethod = "close")
     @SuppressWarnings("Duplicates")
     public org.apache.tomcat.jdbc.pool.DataSource devDataSource() {
 
@@ -70,7 +70,7 @@ public class DataBaseConfig {
     }
 
     @Profile("test")
-    @Bean(destroyMethod = "close")
+    @Bean(name = "dataSource", destroyMethod = "close")
     @SuppressWarnings("Duplicates")
     public org.apache.tomcat.jdbc.pool.DataSource testDataSource() {
 
@@ -88,10 +88,6 @@ public class DataBaseConfig {
         return ds;
     }
 
-
-    @Bean DataSource dataSource(DataSource ds){
-        return ds;
-    }
 
     @Bean
     //It’s important to create LocalContainerEntityManagerFactoryBean and not EntityManagerFactory directly

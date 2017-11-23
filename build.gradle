@@ -14,9 +14,18 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+apply plugin: 'war'
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+
+war {
+    baseName = 'gs-rest'
+    version =  ''
+}
+
 
 repositories {
     jcenter()
@@ -26,7 +35,7 @@ repositories {
 ext.junit4Version = '4.12'
 ext.junitVintageVersion = '4.12.1'
 ext.junitPlatformVersion = '1.0.1'
-ext.junitJupiterVersion = '5.0.+'
+ext.junitJupiterVersion = '5.+'
 ext.log4jVersion = '2.9.0'
 
 
@@ -34,10 +43,21 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version: '5.0.1.RELEASE'
     //compile group: 'org.springframework', name: 'spring-jdbc', version: '5.0.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.0.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-test', version: '5.0.1.RELEASE'
 
-    compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.23'
-    compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.0.2'
+  //  compile group: 'org.springframework', name: 'spring-jcl', version: '5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.0.1.RELEASE'
+
+
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
+
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
+
+
+
+    compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.+'
+    compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+'
 
 
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
@@ -45,9 +65,14 @@ dependencies {
         exclude group: 'junit'
     }
 
+    compile group: 'org.springframework', name: 'spring-test', version: '5.0.1.RELEASE'
     testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
+    testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
 
-    compileOnly 'org.projectlombok:lombok:1.16.18'
+
+
+    compileOnly 'org.projectlombok:lombok:1.16.+'
 
     // It is not necessary nor recommended to add JSR 305 dependency in project classpath
     // to take advantage of Spring null-safe API. Only projects like Spring-based libraries

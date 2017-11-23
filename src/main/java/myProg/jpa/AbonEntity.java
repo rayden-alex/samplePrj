@@ -270,6 +270,7 @@ public class AbonEntity {
         result = 31 * result + (dateRTxt != null ? dateRTxt.hashCode() : 0);
         return result;
     }
+
 }
 
 
