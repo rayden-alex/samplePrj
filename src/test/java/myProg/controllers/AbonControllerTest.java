@@ -19,6 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringJUnitWebConfig(AppConfig.class)
 @ActiveProfiles({"default", "dev"})
 class AbonControllerTest {
+    @Test
+    void welcome() {
+    }
+
     private MockMvc mockMvc;
 
     @BeforeEach
