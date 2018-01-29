@@ -1,0 +1,6 @@
+# Чтобы игнорить всё в папке IntelliJ IDEA
+.idea/
+
+# Archived Logs
+archived/
+
