@@ -1,9 +1,10 @@
 package myProg.services;
 
-import myProg.AbonDao;
-import myProg.jpa.AbonEntity;
+import myProg.dao.AbonDao;
+import myProg.jpa.entity.AbonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class AbonServiceImpl implements AbonService {
         return abonDao.findAll();
     }
 
-    @NonNull
+    @Nullable
     @Override
-    public List<AbonEntity> findById(Long id) {
+    public AbonEntity findById(Long id) {
         return abonDao.findAbonEntityById(id);
     }
 

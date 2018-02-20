@@ -1,6 +1,6 @@
 package myProg.services;
 
-import myProg.jpa.AbonEntity;
+import myProg.jpa.entity.AbonEntity;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface AbonService {
     List<AbonEntity> findAll();
 
     @NonNull
-    List<AbonEntity> findById(Long id);
+    AbonEntity findById(Long id);
 
     @NonNull
     Long count();

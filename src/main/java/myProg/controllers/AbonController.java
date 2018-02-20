@@ -1,6 +1,6 @@
 package myProg.controllers;
 
-import myProg.jpa.AbonEntity;
+import myProg.jpa.entity.AbonEntity;
 import myProg.services.AbonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,9 +31,7 @@ public class AbonController {
             produces = {
                     "application/xml; charset=UTF-8",
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<AbonEntity> abonEntityList(@PathVariable Long id) {//REST Endpoint.
-
-        List<AbonEntity> abonEntityList = abonService.findById(id);
-        return abonEntityList;
+    public AbonEntity abonEntity(@PathVariable Long id) {//REST Endpoint.
+        return abonService.findById(id);
     }
 }
