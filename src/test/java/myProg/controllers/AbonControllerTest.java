@@ -1,7 +1,7 @@
 package myProg.controllers;
 
 
-import myProg.AppConfig;
+import myProg.config.AppConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

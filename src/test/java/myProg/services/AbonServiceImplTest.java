@@ -1,7 +1,7 @@
 package myProg.services;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import myProg.AppConfig;
+import myProg.config.AppConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

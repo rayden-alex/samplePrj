@@ -1,25 +1,27 @@
-package myProg;
+package myProg.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import myProg.jpa.AbonEntity;
+import myProg.dto.Abon;
+import myProg.jpa.entity.AbonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 //        you need to annotate your repository with @Repository so
@@ -42,11 +44,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AbonDaoImpl implements AbonDao {
 
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final JdbcStream jdbcStream;
-
-
     private EntityManager entityManager;
 
     @PersistenceContext
@@ -57,30 +55,29 @@ public class AbonDaoImpl implements AbonDao {
     @Autowired
     public AbonDaoImpl(@Qualifier("namedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.jdbcStream = new JdbcStream(jdbcTemplate);
     }
 
     @NonNull
     @Override
     @Transactional(readOnly = true)
     public List<AbonEntity> findAll() {
-        TypedQuery<AbonEntity> query = entityManager.createQuery("from AbonEntity as a where a.id < :param", AbonEntity.class);
+        TypedQuery<AbonEntity> query = entityManager.createQuery("select a from AbonEntity as a where a.id < :param", AbonEntity.class);
         query.setParameter("param", 100L);
         return query.getResultList();
     }
 
-    @NonNull
+    @Nullable
     @Override
     @Transactional(readOnly = true)
-    public List<AbonEntity> findAbonEntityById(Long id) {
-        TypedQuery<AbonEntity> query = entityManager.createQuery("from AbonEntity as a where a.id = :param", AbonEntity.class);
+    public AbonEntity findAbonEntityById(Long id) {
+        TypedQuery<AbonEntity> query = entityManager.createQuery("select a from AbonEntity as a where a.id = :param", AbonEntity.class);
         query.setParameter("param", id);
-        return query.getResultList();
+        return DataAccessUtils.singleResult(query.getResultList());
     }
 
     @Override
     public List<Abon> findByFio(String fio) {
-        return null;
+        return Collections.emptyList();
     }
 
     @NonNull
@@ -98,7 +95,7 @@ public class AbonDaoImpl implements AbonDao {
     @Override
     @Transactional(readOnly = true)
     public Long count() {
-        TypedQuery<Long> query =entityManager.createQuery("select count(a) from AbonEntity as a", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(a) from AbonEntity as a", Long.class);
         return query.getSingleResult();
     }
 
@@ -106,26 +103,11 @@ public class AbonDaoImpl implements AbonDao {
     public List<Abon> findFioById(Long id) {
         Objects.requireNonNull(jdbcTemplate);
 
-        //language=SQL92
         final String SQL = "SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID <:ID1";
         SqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("ID1", id);
 
-        return jdbcStream.streamQuery(SQL, namedParameters, stream -> stream
-                .map(this::sqlRowSetAbonMapper)
-                .collect(Collectors.toList()));
-
-
-    }
-
-    private Abon sqlRowSetAbonMapper(SqlRowSet row) {
-        Abon abon = new Abon();
-
-        abon.setId(row.getLong("ID"));
-        abon.setFio(row.getString("FIO"));
-        abon.setPhone(row.getString("PHONE_LOCAL"));
-
-        return abon;
+        return jdbcTemplate.query(SQL, namedParameters, getAbonRowMapper());
     }
 
     private RowMapper<Abon> getAbonRowMapper() {
@@ -145,7 +127,6 @@ public class AbonDaoImpl implements AbonDao {
     public void writeFioById(Long id, RowCallbackHandler rch) {
         Objects.requireNonNull(jdbcTemplate);
 
-        //language=SQL92
         final String SQL = "SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID <:ID1";
         SqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("ID1", id);

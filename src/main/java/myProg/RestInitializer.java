@@ -1,5 +1,6 @@
 package myProg;
 
+import myProg.config.AppConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class RestInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {

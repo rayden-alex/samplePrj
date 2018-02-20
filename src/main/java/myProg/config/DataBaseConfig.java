@@ -1,6 +1,5 @@
-package myProg;
+package myProg.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
@@ -88,7 +86,6 @@ public class DataBaseConfig {
         return ds;
     }
 
-
     @Bean
     //It’s important to create LocalContainerEntityManagerFactoryBean and not EntityManagerFactory directly
     //since the former also participates in exception translation mechanisms besides simply creating EntityManagerFactory
@@ -103,10 +100,19 @@ public class DataBaseConfig {
     public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean lc = new LocalContainerEntityManagerFactoryBean();
         lc.setDataSource(dataSource);
-        lc.setPersistenceUnitName("FirebirdPersistenceUnit");
-        lc.setJpaVendorAdapter(new HibernateJpaVendorAdapter()); //  ???     META-INF/persistence.xml:5      hibernate.properties:1
+        lc.setJpaVendorAdapter(new HibernateJpaVendorAdapter()); //  ???     META-INF/__p_rsistence.xml:5      hibernate.properties:1
         //lc.setJpaDialect( /* JpaDialect установится при вызове setJpaVendorAdapter */);
-        //lc.setPackagesToScan();
+
+        //   Such package scanning defines a "default persistence unit" in Spring, which
+        //	 * may live next to regularly defined units originating from persistence.xml
+        //	 * Its name is determined by #setDefaultPersistenceUnitName: by default,
+        //	 * it's simply "default".
+        //   Т.е. при скане создается "default" PersistenceUnit и задавать другое имя нельзя!
+        //   (ну или если создать отдельные PersistenceUnitManager )
+        //   https://stackoverflow.com/questions/21180785/property-packagestoscan-not-working
+        lc.setPackagesToScan("myProg.jpa.entity"); // Работает только в конфигурации БЕЗ!!! persistence.xml, т.е. его вообще не должно быть, даже пустого.
+
+        //  lc.setPersistenceUnitName("FirebirdPersistenceUnit"); // Нужно только при наличии нескольких PersistenceUnit
 
 
         Properties jpaProperties = new Properties();

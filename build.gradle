@@ -10,7 +10,8 @@ buildscript {
 }
 
 plugins {
-    id 'net.ltgt.apt' version '0.13'   //  https://habrahabr.ru/post/345520/      https://github.com/tbroyer/gradle-apt-plugin
+    id 'net.ltgt.apt' version '0.13'
+    //  https://habrahabr.ru/post/345520/      https://github.com/tbroyer/gradle-apt-plugin
 }
 
 group 'samples'
@@ -30,42 +31,68 @@ targetCompatibility = 1.8
 
 war {
     baseName = 'gs-rest'
-    version =  ''
+    version = ''
 }
 
 
 repositories {
     jcenter()
-   // mavenCentral()
+    // mavenCentral()
 }
 
 
-ext.junit4Version = '4.12'
-ext.junitVintageVersion = '4.12.1'
-ext.junitPlatformVersion = '1.0.+'
-ext.junitJupiterVersion = '5.0.3'
-ext.log4jVersion = '2.9.0'
+ext {
+    junit4Version = '4.12'
+    junitVintageVersion = '4.12.1'
+    junitPlatformVersion = '1.0.+'
+    junitJupiterVersion = '5.0.3'
+
+    log4jVersion = '2.9.0'
+    springVersion = '5.0.4.RELEASE'
+    hibernateVersion = '5.2.13.Final'
+}
 
 
 dependencies {
-    compile group: 'org.springframework', name: 'spring-context', version: '5.0.2.RELEASE'
-    //compile group: 'org.springframework', name: 'spring-jdbc', version: '5.0.2.RELEASE'
-    compile group: 'org.springframework', name: 'spring-orm', version: '5.0.2.RELEASE'
-
-  //  compile group: 'org.springframework', name: 'spring-jcl', version: '5.0.2.RELEASE'
-    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.0.2.RELEASE'
+    compileOnly 'org.projectlombok:lombok:1.16.+'
+    apt 'org.projectlombok:lombok:1.16.+'
 
 
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-orm:${springVersion}"
+    compile "org.springframework:spring-webmvc:${springVersion}"
+
+
+    compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile "org.hibernate:hibernate-java8:${hibernateVersion}"
 
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
-
+// ObjectMapper mapper = new ObjectMapper()
+//            .registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.+'
 
 
     compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.+'
     compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+'
+
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
+
+    // It is not necessary nor recommended to add JSR 305 dependency in project classpath
+    // to take advantage of Spring null-safe API. Only projects like Spring-based libraries
+    // using null-safety annotations in their codebase should add com.google.code.findbugs:jsr305:3.0.2
+    // with compileOnly Gradle configuration or Maven provided scope to avoid compile warnings.
+    //    compile 'com.google.code.findbugs:jsr305:3.0.2'
+
+    //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
+
+
+
+    compile "org.springframework:spring-test:${springVersion}"
+    testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
+    testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
 
 
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
@@ -73,42 +100,16 @@ dependencies {
         exclude group: 'junit'
     }
 
-    compile group: 'org.springframework', name: 'spring-test', version: '5.0.2.RELEASE'
-    testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
-    testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
-
-
-
-    compileOnly 'org.projectlombok:lombok:1.16.+'
-    apt 'org.projectlombok:lombok:1.16.+'
-
-
-    // It is not necessary nor recommended to add JSR 305 dependency in project classpath
-    // to take advantage of Spring null-safe API. Only projects like Spring-based libraries
-    // using null-safety annotations in their codebase should add com.google.code.findbugs:jsr305:3.0.2
-    // with compileOnly Gradle configuration or Maven provided scope to avoid compile warnings.
-//    compile 'com.google.code.findbugs:jsr305:3.0.2'
-
-    //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
-
-
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.12.Final'
-    compile group: 'org.hibernate', name: 'hibernate-java8', version: '5.2.12.Final'
-
-
-
     // JUnit Jupiter API and TestEngine implementation
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     // If you also want to support JUnit 3 and JUnit 4 tests
     //testCompile("junit:junit:${junit4Version}")
     //testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 
     // To avoid compiler warnings about @API annotations in JUnit code
-   // testCompileOnly('org.apiguardian:apiguardian-api:1.0.+')
+    // testCompileOnly('org.apiguardian:apiguardian-api:1.0.+')
 
     // To use Log4J's LogManager
     //testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")

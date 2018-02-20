@@ -1,8 +1,10 @@
-package myProg;
+package myProg.dao;
 
-import myProg.jpa.AbonEntity;
+import myProg.dto.Abon;
+import myProg.jpa.entity.AbonEntity;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -11,8 +13,8 @@ public interface AbonDao {
     @NonNull
     List<AbonEntity> findAll();
 
-    @NonNull
-    List<AbonEntity> findAbonEntityById(Long id);
+    @Nullable
+    AbonEntity findAbonEntityById(Long id);
 
     List<Abon> findByFio(String fio);
 
