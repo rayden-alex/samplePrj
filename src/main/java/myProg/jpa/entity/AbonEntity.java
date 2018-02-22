@@ -1,17 +1,21 @@
 package myProg.jpa.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "ABON")
 
-@Data
 @NoArgsConstructor
+@RequiredArgsConstructor
+@Setter
+@Getter
+@ToString
 public class AbonEntity {
     @Id
     @Column(name = "ID", updatable = false, nullable = false)
@@ -72,6 +76,29 @@ public class AbonEntity {
     @Column(name = "DATE_R_TXT")
     private String dateRTxt;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof AbonEntity)) return false;
+        final AbonEntity other = (AbonEntity) o;
+
+        return other.canEqual(this)
+                && (getId() != null)
+                && Objects.equals(getId(), other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 43;
+    }
+
+    protected boolean canEqual(Object other) {
+        return (other instanceof AbonEntity);
+    }
+
+//    https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+//    https://www.artima.com/lejava/articles/equality.html
 
 //    @Override
 //    public int hashCode() {
