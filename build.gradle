@@ -42,20 +42,26 @@ repositories {
 
 
 ext {
-    junit4Version = '4.12'
-    junitVintageVersion = '4.12.1'
-    junitPlatformVersion = '1.0.+'
-    junitJupiterVersion = '5.0.3'
+    junit4Version = '+'
+    junitVintageVersion = '+'
+    junitPlatformVersion = '+'
+    junitJupiterVersion = '+'
 
     log4jVersion = '2.9.0'
     springVersion = '5.0.4.RELEASE'
     hibernateVersion = '5.2.13.Final'
 }
 
+configurations.all {
+    // Убирает зависимость Spring от commons-logging
+    exclude group: "commons-logging", module: "commons-logging"
+}
 
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.16.+'
+    testCompileOnly 'org.projectlombok:lombok:1.16.+'
     apt 'org.projectlombok:lombok:1.16.+'
+    testApt 'org.projectlombok:lombok:1.16.+'
 
 
     compile "org.springframework:spring-context:${springVersion}"
@@ -63,20 +69,23 @@ dependencies {
     compile "org.springframework:spring-webmvc:${springVersion}"
 
 
-    compile "org.hibernate:hibernate-core:${hibernateVersion}"
-    compile "org.hibernate:hibernate-java8:${hibernateVersion}"
+    compile("org.hibernate:hibernate-core:${hibernateVersion}") {
+        //exclude group: 'org.jboss.logging', module: 'jboss-logging'
+    }
+//    compile("org.hibernate:hibernate-java8:${hibernateVersion}"){  // С версии 5.2 включено в core
+//        exclude group: 'org.jboss.logging', module: 'jboss-logging'
+//    }
 
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
-// ObjectMapper mapper = new ObjectMapper()
-//            .registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.+'
 
 
     compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.+'
     compile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+'
 
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
 
     // It is not necessary nor recommended to add JSR 305 dependency in project classpath
     // to take advantage of Spring null-safe API. Only projects like Spring-based libraries
@@ -84,12 +93,12 @@ dependencies {
     // with compileOnly Gradle configuration or Maven provided scope to avoid compile warnings.
     //    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
-    //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
 
 
 
-    compile "org.springframework:spring-test:${springVersion}"
+    testCompile "org.springframework:spring-test:${springVersion}"
     testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
     testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
