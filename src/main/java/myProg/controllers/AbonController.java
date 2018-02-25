@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class AbonController {
 
@@ -29,7 +27,7 @@ public class AbonController {
 
     @RequestMapping(path = "/abon/{id}",
             produces = {
-                    "application/xml; charset=UTF-8",
+                    MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
     public AbonEntity abonEntity(@PathVariable Long id) {//REST Endpoint.
         return abonService.findById(id);
