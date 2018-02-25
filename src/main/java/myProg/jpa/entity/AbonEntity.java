@@ -12,7 +12,6 @@ import java.util.Objects;
 @Table(name = "ABON")
 
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Setter
 @Getter
 @ToString
