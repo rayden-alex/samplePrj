@@ -1,6 +1,7 @@
 package myProg;
 
 import myProg.config.AppConfig;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class RestInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -15,6 +16,7 @@ public class RestInitializer extends AbstractAnnotationConfigDispatcherServletIn
         return null;
     }
 
+    @NonNull
     @Override
     protected String[] getServletMappings() {
         return new String[] { "/" };

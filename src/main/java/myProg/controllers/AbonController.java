@@ -3,10 +3,10 @@ package myProg.controllers;
 import myProg.jpa.entity.AbonEntity;
 import myProg.services.AbonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AbonController {
@@ -21,15 +21,42 @@ public class AbonController {
 
 
     @RequestMapping("/")
+    @ResponseStatus(code = HttpStatus.OK)
     public String welcome() {//Welcome page, non-rest
         return "Welcome to RestTemplate Example.";
     }
 
-    @RequestMapping(path = "/abon/{id}",
+    @GetMapping(path = "/abon/{id}",
             produces = {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public AbonEntity abonEntity(@PathVariable Long id) {//REST Endpoint.
-        return abonService.findById(id);
+    public ResponseEntity<AbonEntity> abonEntity(@PathVariable Long id) {
+        AbonEntity entity = abonService.findById(id);
+
+        if (entity == null) { // Формирование ответа и ошибки вручную
+            return ResponseEntity
+                    .badRequest()
+                    .header("Error message", "Abon not found by ID")
+                    .build();
+        } else {
+            return ResponseEntity.ok(entity);//  ResponseEntity.status(HttpStatus.OK).body(entity);
+        }
+    }
+
+    @GetMapping(path = "/abonById/{id}",
+            produces = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public AbonEntity abonEntityById(@PathVariable Long id) {
+        // http://www.baeldung.com/exception-handling-for-rest-with-spring
+        // http://www.baeldung.com/global-error-handler-in-a-spring-rest-api
+
+        AbonEntity entity = abonService.findById(id);
+
+        if (entity == null) { // Формирование ответа и ошибки Спрингом (ошибка через @ResponseStatus в Exception)
+            throw new AbonNotFoundException(id);
+        } else {
+            return entity;
+        }
     }
 }
