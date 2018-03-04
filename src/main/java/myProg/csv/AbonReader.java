@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -15,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Component
+@Slf4j
 public class AbonReader {
 
     private static final String NULL_VALUE = "(null)";
@@ -27,6 +31,8 @@ public class AbonReader {
 
     @Autowired
     AbonReader(@NonNull CsvMapper mapper) {
+        log.info("{}: initialization started", getClass().getSimpleName());
+
         this.mapper = mapper;
         schema = mapper
                 .schema()
@@ -34,6 +40,8 @@ public class AbonReader {
                 .withHeader()
                 .withNullValue(NULL_VALUE)
                 .withColumnSeparator(DELIMITER);
+
+        log.info("{}: initialization completed", getClass().getSimpleName());
     }
 
     public List<AbonEntry> readFromFile(String fileName) throws IOException {

@@ -1,8 +1,11 @@
 package myProg.jpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -15,6 +18,9 @@ import java.util.Objects;
 @Setter
 @Getter
 @ToString
+
+@XmlRootElement(name= "abon") // JAXB annotation - not working
+@JsonRootName(value = "abon") // Jackson annotation - it works depends on precedence of `AnnotationIntrospector's included (Jackson's own vs JAXB).
 public class AbonEntity {
     @Id
     @Column(name = "ID", updatable = false, nullable = false)

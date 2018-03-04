@@ -28,7 +28,7 @@ public class AbonController {
 
     @GetMapping(path = "/abon/{id}",
             produces = {
-                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_XML_VALUE, // jackson-dataformat-xml dependency in build.gradle needed!!!
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<AbonEntity> abonEntity(@PathVariable Long id) {
         AbonEntity entity = abonService.findById(id);
