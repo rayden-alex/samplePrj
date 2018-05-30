@@ -1,6 +1,7 @@
 package myProg.services;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import lombok.extern.slf4j.Slf4j;
 import myProg.config.AppConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 
 @ActiveProfiles({"default", "dev"})
+@Slf4j
 //@Disabled
 //@DbUnitConfiguration(databaseConnection={"testDataSource"})   // mast be "dataSource" bean or set it explicitly
 class AbonServiceImplTest {
@@ -47,6 +49,8 @@ class AbonServiceImplTest {
     @Test
     public void countTest() {
         Long cnt = service.count();
+
+        log.info("SLF4 test" );
         Assertions.assertEquals(653191L, cnt.longValue());
     }
 }

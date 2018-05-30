@@ -25,8 +25,8 @@ public class AbonServiceImpl implements AbonService {
         return abonDao.findAll();
     }
 
-    @Nullable
     @Override
+    @Nullable
     public AbonEntity findById(Long id) {
         return abonDao.findAbonEntityById(id);
     }
