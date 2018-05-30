@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id 'net.ltgt.apt' version '0.13'
+    id 'net.ltgt.apt' version '0.15'
     //  https://habrahabr.ru/post/345520/      https://github.com/tbroyer/gradle-apt-plugin
 }
 
@@ -48,7 +48,7 @@ ext {
     junitJupiterVersion = '+'
 
     log4jVersion = '2.9.0'
-    springVersion = '5.0.4.RELEASE'
+    springVersion = '5.0.5.RELEASE'
     hibernateVersion = '5.2.13.Final'
 }
 
@@ -60,8 +60,8 @@ configurations.all {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.16.+'
     testCompileOnly 'org.projectlombok:lombok:1.16.+'
-    apt 'org.projectlombok:lombok:1.16.+'
-    testApt 'org.projectlombok:lombok:1.16.+'
+    annotationProcessor 'org.projectlombok:lombok:1.16.+'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.16.+'
 
 
     compile "org.springframework:spring-context:${springVersion}"
