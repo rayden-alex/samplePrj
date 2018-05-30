@@ -1,5 +1,6 @@
 package myProg.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import myProg.jpa.entity.AbonEntity;
 import myProg.services.AbonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 public class AbonController {
 
 
@@ -31,6 +33,9 @@ public class AbonController {
                     MediaType.APPLICATION_XML_VALUE, // jackson-dataformat-xml dependency in build.gradle needed!!!
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<AbonEntity> abonEntity(@PathVariable Long id) {
+        log.info("{}: initialization started", getClass().getSimpleName());
+        log.info("{}: id=", id);
+
         AbonEntity entity = abonService.findById(id);
 
         if (entity == null) { // Формирование ответа и ошибки вручную
