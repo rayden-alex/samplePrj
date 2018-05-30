@@ -2,6 +2,7 @@ package myProg.controllers;
 
 
 import myProg.config.AppConfig;
+import myProg.config.WebConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitWebConfig(AppConfig.class)
+@SpringJUnitWebConfig({AppConfig.class, WebConfig.class}) // Нужно обязательно указывать и root-context, и servlet-context!
 @ActiveProfiles({"default", "dev"})
 class AbonControllerTest {
     @Test
-    void welcome() {
+    void welcome() throws Exception {
+        this.mockMvc.perform(get("/"))
+                .andExpect(status().isOk());
     }
 
     private MockMvc mockMvc;
@@ -61,6 +64,22 @@ class AbonControllerTest {
                 .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
+    }
+
+    @Test
+    void abonEntityByIdFound() throws Exception {
+        this.mockMvc.perform(get("/abonById/25")
+                .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
+                //.andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void abonEntityByIdNotFound() throws Exception {
+        this.mockMvc.perform(get("/abonById/-100")
+                .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
+                //.andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
 
