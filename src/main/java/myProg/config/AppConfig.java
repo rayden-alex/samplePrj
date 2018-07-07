@@ -2,13 +2,18 @@ package myProg.config;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 
+import java.util.Arrays;
 
+@Slf4j
 @Configuration
 
 // WebApplicationContext (Root namespace)
@@ -24,13 +29,19 @@ import org.springframework.lang.NonNull;
 @ComponentScan("myProg.jpa")
 @ComponentScan("myProg.dao")
 @ComponentScan("myProg.csv")
-@Import(DataBaseConfig.class)
-public class AppConfig {
+@Import({DataBaseConfig.class/*, SecurityConfig.class**/})
+public class AppConfig implements EnvironmentAware {
 
     @NonNull
     @Bean
     public CsvMapper csvFileMapper() {
         return (CsvMapper) new CsvMapper().registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
 
+    }
+
+    @Override
+    public void setEnvironment(@NonNull Environment environment) {
+        log.info("==================Active Profiles===============----------");
+        log.info("ActiveProfiles: {}", Arrays.toString(environment.getActiveProfiles()));
     }
 }

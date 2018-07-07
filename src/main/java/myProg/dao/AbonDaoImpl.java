@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import myProg.dto.Abon;
 import myProg.jpa.entity.AbonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,7 +52,7 @@ public class AbonDaoImpl implements AbonDao {
     }
 
     @Autowired
-    public AbonDaoImpl(@Qualifier("namedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
+    public AbonDaoImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

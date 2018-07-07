@@ -34,7 +34,7 @@ public class AbonController {
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<AbonEntity> abonEntity(@PathVariable Long id) {
         log.info("{}: initialization started", getClass().getSimpleName());
-        log.info("{}: id=", id);
+        log.info("id={}", id);
 
         AbonEntity entity = abonService.findById(id);
 
