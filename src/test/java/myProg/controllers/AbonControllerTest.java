@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitWebConfig({AppConfig.class, WebConfig.class}) // Нужно обязательно указывать и root-context, и servlet-context!
-@ActiveProfiles({"default", "dev"})
+@ActiveProfiles({"default", "test"})
 class AbonControllerTest {
     @Test
     void welcome() throws Exception {

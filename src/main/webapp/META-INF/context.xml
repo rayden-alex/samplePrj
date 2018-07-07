@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+    <!--
+
+    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+    factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
+    connectionProperties="encoding=UTF8"
+    url="jdbc:firebirdsql://localhost:3050/d:\\DB\\FB_BASES.FDB"
+
+    http://qaru.site/questions/3093323/dependences-for-firebird-jaybird-and-hibernate
+    -->
+    <Resource name="jdbc/AbonDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              driverClassName="org.firebirdsql.jdbc.FBDriver"
+              url="jdbc:firebirdsql://localhost:3050/d:\\DB\\FB_BASES.FDB"
+              connectionProperties="encoding=UTF8"
+              username="SYSDBA"
+              password="masterkey"
+              maxActive="20"
+              maxIdle="10"
+              validationQuery="select 1 from rdb$database"
+              validationInterval="30000"
+              defaultAutoCommit="false"
+              defaultTransactionIsolation="READ_COMMITTED"/>
+
+
+</Context>

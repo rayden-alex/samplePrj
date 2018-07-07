@@ -1,24 +1,32 @@
 package myProg.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.ContextLoaderListener;
 
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Properties;
 
+@Slf4j
 @Configuration
 @EnableTransactionManagement()
-@PropertySource("classpath:META-INF/config/jdbc.properties")
+@PropertySource("classpath:jdbc.properties") //${my.placeholder:default/path}
 public class DataBaseConfig {
 
     @Value("${jdbc.driverClassName}")
@@ -33,10 +41,31 @@ public class DataBaseConfig {
     @Value("${jdbc.password}")
     private String password;
 
+    @Value("${jdbc.validationQuery}")
+    private String validationQuery;
 
-    @Bean(name = "namedParameterJdbcTemplate")
+    @Value("${jndi.DB.url}")
+    private String jndiDbUrl;
+
+    @Autowired
+    private Environment env;
+
+
+    @Bean//(name = "namedParameterJdbcTemplate")
     public NamedParameterJdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Profile("prod")
+    // через Run configuration / Startup/ Pass Environment variables / spring.profiles.active=prod  -- НЕ работает!
+    // через Run configuration / VM Options /  -Dspring.profiles.active=prod   -- работает
+    @Bean(name = "dataSource")//, destroyMethod = "close")
+    public DataSource jndiDataSource()  throws NamingException {
+        DataSource ds = new JndiTemplate().lookup(jndiDbUrl, DataSource.class);
+        log.info("==================DataSource params===============----------");
+        log.info(ds.toString());
+
+        return ds;
     }
 
     @Profile("dev")
@@ -63,6 +92,7 @@ public class DataBaseConfig {
 
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
+        ds.setValidationQuery(validationQuery);
 
         return ds;
     }
@@ -82,6 +112,10 @@ public class DataBaseConfig {
 
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
+        ds.setValidationQuery(validationQuery);
+
+        log.info("==================DataSource params===============----------");
+        log.info(ds.toString());
 
         return ds;
     }
@@ -98,10 +132,10 @@ public class DataBaseConfig {
     //rent transaction or, if one doesn’t exist, creates a new one. Thus, you know that you’re
     //always working with an entity manager in a thread-safe way.
     public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource) {
-        LocalContainerEntityManagerFactoryBean lc = new LocalContainerEntityManagerFactoryBean();
-        lc.setDataSource(dataSource);
-        lc.setJpaVendorAdapter(new HibernateJpaVendorAdapter()); //  ???     META-INF/__p_rsistence.xml:5      hibernate.properties:1
-        //lc.setJpaDialect( /* JpaDialect установится при вызове setJpaVendorAdapter */);
+        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+        emfb.setDataSource(dataSource);
+        emfb.setJpaVendorAdapter(new HibernateJpaVendorAdapter()); //  ???     META-INF/__p_rsistence.xml:5      hibernate.properties:1
+        //emfb.setJpaDialect( /* JpaDialect установится при вызове setJpaVendorAdapter */);
 
         //   Such package scanning defines a "default persistence unit" in Spring, which
         //	 * may live next to regularly defined units originating from persistence.xml
@@ -110,9 +144,9 @@ public class DataBaseConfig {
         //   Т.е. при скане создается "default" PersistenceUnit и задавать другое имя нельзя!
         //   (ну или если создать отдельные PersistenceUnitManager )
         //   https://stackoverflow.com/questions/21180785/property-packagestoscan-not-working
-        lc.setPackagesToScan("myProg.jpa.entity"); // Работает только в конфигурации БЕЗ!!! persistence.xml, т.е. его вообще не должно быть, даже пустого.
+        emfb.setPackagesToScan("myProg.jpa.entity"); // Работает только в конфигурации БЕЗ!!! persistence.xml, т.е. его вообще не должно быть, даже пустого.
 
-        //  lc.setPersistenceUnitName("FirebirdPersistenceUnit"); // Нужно только при наличии нескольких PersistenceUnit
+        //  emfb.setPersistenceUnitName("FirebirdPersistenceUnit"); // Нужно только при наличии нескольких PersistenceUnit
 
 
         Properties jpaProperties = new Properties();
@@ -123,9 +157,9 @@ public class DataBaseConfig {
         jpaProperties.setProperty("hibernate.generateDdl", "false");
         jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.FirebirdDialect");
 
-        lc.setJpaProperties(jpaProperties);
+        emfb.setJpaProperties(jpaProperties);
 
-        return lc;
+        return emfb;
     }
 
     /**

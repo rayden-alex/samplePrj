@@ -7,11 +7,13 @@ public class DispatcherInitializer extends AbstractAnnotationConfigDispatcherSer
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
+        //"root" application context (non-web infrastructure) configuration
         return new Class[]{AppConfig.class};
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
+        //DispatcherServlet application context (Spring MVC infrastructure) configuration
         return new Class[]{WebConfig.class};
     }
 

@@ -8,13 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 
 //@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {AppConfig.class})   ---------->   @SpringJUnitConfig(AppConfig.class)
 
-@SpringJUnitWebConfig(AppConfig.class)
+@SpringJUnitConfig(AppConfig.class)
 
 //Spring provides the following TestExecutionListener implementations that are registered by default, exactly in this order.
 // ServletTestExecutionListener: configures Servlet API mocks for a WebApplicationContext
@@ -34,7 +35,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
         DbUnitTestExecutionListener.class
 }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 
-@ActiveProfiles({"default", "dev"})
+@ActiveProfiles({"default", "test"})
 @Slf4j
 //@Disabled
 //@DbUnitConfiguration(databaseConnection={"testDataSource"})   // mast be "dataSource" bean or set it explicitly
