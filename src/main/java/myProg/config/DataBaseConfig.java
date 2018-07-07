@@ -59,16 +59,22 @@ public class DataBaseConfig {
     @Profile("prod")
     // через Run configuration / Startup/ Pass Environment variables / spring.profiles.active=prod  -- НЕ работает!
     // через Run configuration / VM Options /  -Dspring.profiles.active=prod   -- работает
+
+    // через d:\Tomcat\conf\web.xml
+    //  <context-param>
+    //    <param-name>spring.profiles.active</param-name>
+    //    <param-value>prod</param-value>
+    //  </context-param>   ---- работает.   ВЫБРАН ЭТОТ СПОСОБ!
     @Bean(name = "dataSource")//, destroyMethod = "close")
     public DataSource jndiDataSource()  throws NamingException {
         DataSource ds = new JndiTemplate().lookup(jndiDbUrl, DataSource.class);
-        log.info("==================DataSource params===============----------");
+        log.info("==================JNDI DataSource params===============----------");
         log.info(ds.toString());
 
         return ds;
     }
 
-    @Profile("dev")
+    @NoProfilesEnabled({"prod","test"})
     @Bean(name = "dataSource", destroyMethod = "close")
     @SuppressWarnings("Duplicates")
     public org.apache.tomcat.jdbc.pool.DataSource devDataSource() {
@@ -94,6 +100,9 @@ public class DataBaseConfig {
         ds.setRollbackOnReturn(true);
         ds.setValidationQuery(validationQuery);
 
+        log.info("==================dev DataSource params===============----------");
+        log.info(ds.toString());
+
         return ds;
     }
 
@@ -114,7 +123,7 @@ public class DataBaseConfig {
         ds.setRollbackOnReturn(true);
         ds.setValidationQuery(validationQuery);
 
-        log.info("==================DataSource params===============----------");
+        log.info("==================test DataSource params===============----------");
         log.info(ds.toString());
 
         return ds;
