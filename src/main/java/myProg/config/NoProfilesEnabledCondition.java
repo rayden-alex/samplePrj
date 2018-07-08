@@ -10,14 +10,11 @@ public class NoProfilesEnabledCondition implements Condition {
     @Override
     public boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
         MultiValueMap<String, Object> attrs = metadata.getAllAnnotationAttributes(NoProfilesEnabled.class.getName());
+        if (attrs == null) return false; // if annotation has no params - bean disabled
 
-        //todo: replace by Stream API
-        //attrs.entrySet().stream().anyMatch()
-        if (attrs != null) {
-            for (Object value : attrs.get("value")) {
-                if (context.getEnvironment().acceptsProfiles((String[]) value)) {
-                    return false;
-                }
+        for (Object value : attrs.get("value")) {
+            if (context.getEnvironment().acceptsProfiles((String[]) value)) {
+                return false;
             }
         }
         return true;
