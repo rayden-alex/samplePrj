@@ -9,6 +9,12 @@
     url="jdbc:firebirdsql://localhost:3050/d:\\DB\\FB_BASES.FDB"
 
     http://qaru.site/questions/3093323/dependences-for-firebird-jaybird-and-hibernate
+
+    НЕ СМОТРЯ НА ТО, что в доках написано не копировать connector-api-1.5.jar в Tomcat/lib,
+    БЕЗ НЕГО НЕ РАБОТАЕТ!!!!
+
+    #If not specified, connections will be validation by the isValid() method.
+    validationQuery="select 1 from rdb$database"
     -->
     <Resource name="jdbc/AbonDB"
               auth="Container"
@@ -21,8 +27,7 @@
               password="masterkey"
               maxActive="20"
               maxIdle="10"
-              validationQuery="select 1 from rdb$database"
-              validationInterval="30000"
+              validationInterval="20000"
               defaultAutoCommit="false"
               defaultTransactionIsolation="READ_COMMITTED"/>
 

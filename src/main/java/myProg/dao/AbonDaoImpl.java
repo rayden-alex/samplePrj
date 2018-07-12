@@ -62,6 +62,7 @@ public class AbonDaoImpl implements AbonDao {
     public List<AbonEntity> findAll() {
         TypedQuery<AbonEntity> query = entityManager.createQuery("select a from AbonEntity as a where a.id < :param", AbonEntity.class);
         query.setParameter("param", 100L);
+        query.setHint("org.hibernate.fetchSize", "200");
         return query.getResultList();
     }
 

@@ -1,26 +1,21 @@
 package myProg.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jndi.JndiTemplate;
+import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.context.ContextLoaderListener;
 
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.Properties;
 
 @Slf4j
@@ -44,11 +39,11 @@ public class DataBaseConfig {
     @Value("${jdbc.validationQuery}")
     private String validationQuery;
 
+    @Value("${jdbc.validationInterval}")
+    private long validationInterval;
+
     @Value("${jndi.DB.url}")
     private String jndiDbUrl;
-
-    @Autowired
-    private Environment env;
 
 
     @Bean//(name = "namedParameterJdbcTemplate")
@@ -60,21 +55,21 @@ public class DataBaseConfig {
     // через Run configuration / Startup/ Pass Environment variables / spring.profiles.active=prod  -- НЕ работает!
     // через Run configuration / VM Options /  -Dspring.profiles.active=prod   -- работает
 
-    // через d:\Tomcat\conf\web.xml
+    // через application web.xml или через d:\Tomcat\conf\web.xml
     //  <context-param>
     //    <param-name>spring.profiles.active</param-name>
     //    <param-value>prod</param-value>
     //  </context-param>   ---- работает.   ВЫБРАН ЭТОТ СПОСОБ!
     @Bean(name = "dataSource")//, destroyMethod = "close")
-    public DataSource jndiDataSource()  throws NamingException {
-        DataSource ds = new JndiTemplate().lookup(jndiDbUrl, DataSource.class);
+    public DataSource jndiDataSource() {
+        DataSource ds = new JndiDataSourceLookup().getDataSource(jndiDbUrl);
         log.info("==================JNDI DataSource params===============----------");
         log.info(ds.toString());
 
         return ds;
     }
 
-    @NoProfilesEnabled({"prod","test"})
+    @NoProfilesEnabled({"prod", "test"})
     @Bean(name = "dataSource", destroyMethod = "close")
     @SuppressWarnings("Duplicates")
     public org.apache.tomcat.jdbc.pool.DataSource devDataSource() {
@@ -99,6 +94,7 @@ public class DataBaseConfig {
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
         ds.setValidationQuery(validationQuery);
+        ds.setValidationInterval(validationInterval);
 
         log.info("==================dev DataSource params===============----------");
         log.info(ds.toString());
@@ -122,6 +118,7 @@ public class DataBaseConfig {
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
         ds.setValidationQuery(validationQuery);
+        ds.setValidationInterval(validationInterval);
 
         log.info("==================test DataSource params===============----------");
         log.info(ds.toString());
@@ -162,9 +159,11 @@ public class DataBaseConfig {
         jpaProperties.setProperty("hibernate.show_sql", "true");
         jpaProperties.setProperty("hibernate.format_sql", "true");
         jpaProperties.setProperty("hibernate.use_sql_comments", "true");
+
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProperties.setProperty("hibernate.generateDdl", "false");
         jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.FirebirdDialect");
+        jpaProperties.setProperty("hibernate.jdbc.fetch_size", "100");
 
         emfb.setJpaProperties(jpaProperties);
 
