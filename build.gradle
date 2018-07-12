@@ -190,6 +190,16 @@ test {
         logger.lifecycle("\n\n\n===================Running test: " + descriptor)
     }
 
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent) { // will match the outermost suite
+            println "\n\n\n===Test summary: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+        }
+    }
+
 }
 
 
