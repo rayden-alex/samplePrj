@@ -196,7 +196,8 @@ test {
 
     afterSuite { desc, result ->
         if (!desc.parent) { // will match the outermost suite
-            println "\n\n\n===Test summary: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            logger.lifecycle("\n\n\n===Test summary: {} ({} tests total, {} successes, {} failures, {} skipped)",
+                    result.resultType, result.testCount, result.successfulTestCount, result.failedTestCount, result.skippedTestCount)
         }
     }
 }
