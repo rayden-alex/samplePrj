@@ -185,6 +185,11 @@ test {
     // include 'org/foo/**'
     // exclude 'org/boo/**'
 
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("\n\n\n===================Running test: " + descriptor)
+    }
+
 }
 
 
