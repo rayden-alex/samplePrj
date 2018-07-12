@@ -1,12 +1,12 @@
-import org.junit.platform.console.options.Details
-
 buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
-    }
+
+// from Gradle 4.6 include native support JUnit test ---> gradle-plugin no needed anymore
+//    dependencies {
+//        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
+//    }
 }
 
 plugins {
@@ -20,7 +20,9 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
+
+// from Gradle 4.6 include native support JUnit test ---> gradle-plugin no needed anymore
+// apply plugin: 'org.junit.platform.gradle.plugin'
 
 apply plugin: 'war'
 
@@ -90,7 +92,7 @@ dependencies {
     providedCompile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.23'
     providedCompile group: 'org.apache.tomcat', name: 'tomcat-dbcp', version: '8.5.23'
 
-    // provided, т.к. оба файла фсе равно закинуты в Tomcat/lib
+    // provided, т.к. оба файла все равно закинуты в Tomcat/lib
     providedCompile(group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+') {
         exclude group: 'javax.resource', module: 'connector-api'
     }
@@ -105,16 +107,15 @@ dependencies {
     // with compileOnly Gradle configuration or Maven provided scope to avoid compile warnings.
     //    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
+    // ---------------   Logging -------------------
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
 
-
-
+    // ---------------  Testing --------------------
     testCompile "org.springframework:spring-test:${springVersion}"
     testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
     testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
-
 
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
     testCompile(group: 'org.dbunit', name: 'dbunit', version: '+') {
@@ -125,55 +126,65 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
-    // If you also want to support JUnit 3 and JUnit 4 tests
-    //testCompile("junit:junit:${junit4Version}")
-    //testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
-
     // To avoid compiler warnings about @API annotations in JUnit code
     // testCompileOnly('org.apiguardian:apiguardian-api:1.0.+')
 
-    // To use Log4J's LogManager
-    //testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")
-    //testRuntime("org.apache.logging.log4j:log4j-jul:${log4jVersion}")
-
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-    //allows us to run tests and test suites in a JUnit 4 environment.
-    //testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
 
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.+'
     //testCompile 'org.assertj:assertj-db:1.2.0'
 }
 
-junitPlatform {
-    // platformVersion '1.0.1'
-    filters {
-        engines {
-            include 'junit-jupiter'
-            // include 'junit-vintage'
-            // exclude 'custom-engine'
-        }
-        tags {
-            // include 'fast'
-            //exclude 'slow'
-        }
-        includeClassNamePattern '^.*Tests?.*$'
-        //includeClassNamePatterns '.*Tests', '.*Test'
-        //includeClassNamePatterns '.+'
-    }
-    // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
-    // enableStandardTestTask true
-    // reportsDir file('build/test-results/junit-platform') // this is the default
-    //logManager 'org.apache.logging.log4j.jul.LogManager'
-
-    details Details.TREE
-}
+//junitPlatform { // <--------  from 'org.junit.platform.gradle.plugin'. No needed anymore because of native support
+//    // platformVersion '1.0.1'
+//    filters {
+//        engines {
+//            include 'junit-jupiter'
+//            // include 'junit-vintage'
+//            // exclude 'custom-engine'
+//        }
+//        tags {
+//            // include 'fast'
+//            //exclude 'slow'
+//        }
+//        includeClassNamePattern '^.*Tests?.*$'
+//        //includeClassNamePatterns '.*Tests', '.*Test'
+//        //includeClassNamePatterns '.+'
+//    }
+//    // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
+//    // enableStandardTestTask true
+//    // reportsDir file('build/test-results/junit-platform') // this is the default
+//    //logManager 'org.apache.logging.log4j.jul.LogManager'
+//
+//    details Details.TREE
+//}
 
 
 test {
-    useJUnitPlatform()
+    // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/Test.html
+
+    // enable JUnit Platform (a.k.a. JUnit 5) support
+    useJUnitPlatform {
+        // excludeTags 'slow'
+        includeEngines 'junit-jupiter'
+        excludeEngines 'junit-vintage'
+
+    }
+
+    // set a system property for the test JVM(s)
+    // systemProperty 'someProp', 'someValue'
+
+    // show standard out and standard error of the test JVM(s) on the console
     testLogging.showStandardStreams = true
+
+    // Fail the 'test' task on the first test failure
+    failFast = false
+
+    // explicitly include or exclude tests
+    // include 'org/foo/**'
+    // exclude 'org/boo/**'
+
 }
 
 
