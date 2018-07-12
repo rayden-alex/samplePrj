@@ -199,7 +199,18 @@ test {
             println "\n\n\n===Test summary: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
         }
     }
+}
 
+build {
+    doFirst {
+        logger.quiet("Gradle version: {}   buildTime: {}", GradleVersion.current().getVersion(), GradleVersion.current().getBuildTime())
+    }
+}
+
+clean {
+    doFirst {
+        logger.quiet("Gradle version: {}   buildTime: {}", GradleVersion.current().getVersion(), GradleVersion.current().getBuildTime())
+    }
 }
 
 
