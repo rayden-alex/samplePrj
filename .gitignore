@@ -4,4 +4,6 @@
 # Archived Logs
 archived/
 
-
+# Avoid ignoring Maven and Gradle wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar
+!/gradle/wrapper/gradle-wrapper.jar
