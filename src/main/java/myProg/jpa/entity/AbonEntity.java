@@ -1,11 +1,13 @@
 package myProg.jpa.entity;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,8 +21,9 @@ import java.util.Objects;
 @Getter
 @ToString
 
-@XmlRootElement(name= "abon") // JAXB annotation - not working
-@JsonRootName(value = "abon") // Jackson annotation - it works depends on precedence of `AnnotationIntrospector's included (Jackson's own vs JAXB).
+@XmlRootElement(name = "abon") // JAXB annotation - not working
+@JsonRootName(value = "abon")
+// Jackson annotation - it works depends on precedence of `AnnotationIntrospector's included (Jackson's own vs JAXB).
 public class AbonEntity {
     @Id
     @Column(name = "ID", updatable = false, nullable = false)
@@ -82,6 +85,10 @@ public class AbonEntity {
     private String dateRTxt;
 
 
+    // If you’re dealing with an ORM, make sure to always use getters,
+    // and never field references in hashCode() and equals().
+    // This is for reason, in ORM, occasionally fields are lazy loaded
+    // and not available until called their getter methods
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
