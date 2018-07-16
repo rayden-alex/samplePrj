@@ -32,6 +32,10 @@ import java.util.Arrays;
 @Import({DataBaseConfig.class/*, SecurityConfig.class**/})
 public class AppConfig implements EnvironmentAware {
 
+    static {
+        System.setProperty("management.security.enabled", "false");
+    }
+
     @NonNull
     @Bean
     public CsvMapper csvFileMapper() {

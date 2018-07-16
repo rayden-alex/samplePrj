@@ -1,8 +1,13 @@
 package myProg.config;
 
+import org.springframework.boot.actuate.autoconfigure.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.EndpointWebMvcAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.HealthIndicatorAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerPropertiesAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,6 +22,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 // As such, it typically contains controllers, view resolvers, locale resolvers, and other web-related beans.
 // org.springframework.web.servlet.support.AbstractDispatcherServletInitializer.createServletApplicationContext()
 @ComponentScan("myProg.controllers")
+@Import({EndpointWebMvcAutoConfiguration.class,
+        ManagementServerPropertiesAutoConfiguration.class, EndpointAutoConfiguration.class,
+        HealthIndicatorAutoConfiguration.class})
 public class WebConfig implements WebMvcConfigurer {
 
     @Override

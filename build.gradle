@@ -70,6 +70,7 @@ dependencies {
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-orm:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
+    compile "org.springframework.boot:spring-boot-actuator:1.5.14.RELEASE"
     compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
     compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
