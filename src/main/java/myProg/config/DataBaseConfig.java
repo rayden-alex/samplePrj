@@ -162,7 +162,7 @@ public class DataBaseConfig {
 
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProperties.setProperty("hibernate.generateDdl", "false");
-        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.FirebirdDialect");
+        jpaProperties.setProperty("hibernate.dialect", "myProg.config.Firebird3CustomDialect");
         jpaProperties.setProperty("hibernate.jdbc.fetch_size", "100");
 
         emfb.setJpaProperties(jpaProperties);
