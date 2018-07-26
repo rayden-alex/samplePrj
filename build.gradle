@@ -10,8 +10,11 @@ buildscript {
 }
 
 plugins {
-    id 'net.ltgt.apt' version '0.15'
+    id 'net.ltgt.apt' version '0.18'
     //  https://habrahabr.ru/post/345520/      https://github.com/tbroyer/gradle-apt-plugin
+
+    // JMH Gradle Plugin
+    id "me.champeau.gradle.jmh" version "0.4.7"  //https://github.com/melix/jmh-gradle-plugin
 }
 
 group 'samples'
@@ -135,6 +138,12 @@ dependencies {
 
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.+'
     //testCompile 'org.assertj:assertj-db:1.2.0'
+
+
+
+    // ========== JMH micro-benchmarking framework ====================
+    jmh 'org.openjdk.jmh:jmh-core:1.21'
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.21'
 }
 
 //junitPlatform { // <--------  from 'org.junit.platform.gradle.plugin'. No needed anymore because of native support
@@ -188,7 +197,7 @@ test {
 
     // listen to events in the test execution lifecycle
     beforeTest { descriptor ->
-        logger.lifecycle("\n\n\n===================Running test: " + descriptor)
+        logger.lifecycle("\n\n\n===================Running test: {}", descriptor)
     }
 
     testLogging {
@@ -213,7 +222,24 @@ clean {
     doFirst {
         logger.quiet("Gradle version: {}   buildTime: {}", GradleVersion.current().getVersion(), GradleVersion.current().getBuildTime())
     }
+
 }
+
+jmh {
+    includeTests = false // Allows to include test sources into generate JMH jar, i.e. use it when benchmarks depend on the test classes.
+    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE // Strategy to apply when encountring duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
+
+    fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
+    iterations = 3 // Number of measurement iterations to do.
+    warmupIterations = 3 // Number of warmup iterations to do.
+
+    jmhVersion = "1.21" // Specifies JMH version
+}
+
+//task deleteEmptyBmList(type: Delete) {
+//    delete "$buildDir/jmh-generated-classes/META-INF/BenchmarkList"
+//}
+//jmhCompileGeneratedClasses.finalizedBy deleteEmptyBmList
 
 
 
