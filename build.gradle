@@ -71,24 +71,24 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.+'
 
 
-    compile "org.springframework:spring-context:${springVersion}"
-    compile "org.springframework:spring-orm:${springVersion}"
-    compile "org.springframework.data:spring-data-jpa:${springDataJPAVersion}"
-    compile "org.springframework:spring-webmvc:${springVersion}"
-    compile "org.springframework.boot:spring-boot-actuator:1.5.14.RELEASE"
-    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
-    compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-orm:${springVersion}"
+    implementation "org.springframework.data:spring-data-jpa:${springDataJPAVersion}"
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    //compile "org.springframework.boot:spring-boot-actuator:1.5.14.RELEASE"
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
 
-    compile("org.hibernate:hibernate-core:${hibernateVersion}")
+    implementation("org.hibernate:hibernate-core:${hibernateVersion}")
     // compile("org.hibernate:hibernate-java8:${hibernateVersion}") // С версии 5.2 включено в core
 
 
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
     // for REST produces
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.+'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.+'
 
 
     providedCompile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.23'
@@ -109,22 +109,22 @@ dependencies {
     //    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
     // ---------------   Logging -------------------
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
 
     // ---------------  Testing --------------------
-    testCompile "org.springframework:spring-test:${springVersion}"
-    testCompile group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
-    testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
+    testImplementation "org.springframework:spring-test:${springVersion}"
+    testImplementation group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
+    testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
 
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
-    testCompile(group: 'org.dbunit', name: 'dbunit', version: '+') {
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.+'
+    testImplementation(group: 'org.dbunit', name: 'dbunit', version: '+') {
         exclude group: 'junit'
     }
 
     // JUnit Jupiter API and TestEngine implementation
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     // To avoid compiler warnings about @API annotations in JUnit code
@@ -133,7 +133,7 @@ dependencies {
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.+'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.+'
     //testCompile 'org.assertj:assertj-db:1.2.0'
 
 
