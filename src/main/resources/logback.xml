@@ -50,6 +50,14 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="org.hibernate.SQL" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.hibernate.stat" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="error">
         <appender-ref ref="FILE-ERROR"/>
     </root>
