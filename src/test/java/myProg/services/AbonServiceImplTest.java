@@ -3,13 +3,16 @@ package myProg.services;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import lombok.extern.slf4j.Slf4j;
 import myProg.config.AppConfig;
-import org.junit.jupiter.api.Assertions;
+import myProg.domain.Abon;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 //@ExtendWith(SpringExtension.class)
@@ -51,8 +54,42 @@ class AbonServiceImplTest {
     public void countTest() {
         Long cnt = service.count();
 
-        log.info("SLF4 test" );
-        Assertions.assertEquals(653191L, cnt.longValue());
+        log.info("SLF4 test");
+        assertEquals(653191L, cnt.longValue());
+    }
+
+    @Test
+    void findAbonByIdNotExistTest() {
+        Abon abon = service.findAbonById(-1L);
+        assertNull(abon);
+    }
+
+    @Test
+    void findAbonByIdExistTest() {
+        Abon abon = service.findAbonById(25L);
+        assertNotNull(abon);
+        assertEquals(25L, abon.getId().longValue());
+    }
+
+    @Test()
+    void findAbonByIdNullTest() {
+        Abon abon = service.findAbonById(null);
+        assertNull(abon);
+    }
+
+    @Test
+    void findByIdNotExistTest() {
+        Optional<Abon> abon = service.findById(-1L);
+        assertEquals(Optional.empty(), abon);
+    }
+
+    @Test
+    void findByIdNullTest() {
+        try {
+            service.findById(null);
+        } catch (Exception e) {
+            assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+        }
     }
 }
 

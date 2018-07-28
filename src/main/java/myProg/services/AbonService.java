@@ -10,12 +10,12 @@ import java.util.Optional;
 
 public interface AbonService {
 
-    @NonNull
     List<Abon> findAll();
 
-    //@Nullable
-    Optional<Abon> findById(Long id);
+    Optional<Abon> findById(@NonNull Long id);
 
-    @NonNull
-    Long count();
+    long count();
+
+    @Nullable
+    Abon findAbonById(@Nullable Long id);
 }

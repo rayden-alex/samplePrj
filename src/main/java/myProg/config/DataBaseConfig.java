@@ -21,7 +21,7 @@ import java.util.Properties;
 
 @Slf4j
 @Configuration
-@EnableJpaRepositories(value = "myProg.dao")
+@EnableJpaRepositories("myProg.dao")
 @EnableTransactionManagement
 @PropertySource("classpath:jdbc.properties") //${my.placeholder:default/path}
 public class DataBaseConfig {

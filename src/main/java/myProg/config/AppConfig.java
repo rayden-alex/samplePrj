@@ -26,8 +26,6 @@ import java.util.Arrays;
 // Все равно потом все бины собираются в
 
 @ComponentScan("myProg.services")
-@ComponentScan("myProg.jpa")
-@ComponentScan("myProg.dao")
 @ComponentScan("myProg.csv")
 @Import({DataBaseConfig.class/*, SecurityConfig.class**/})
 public class AppConfig implements EnvironmentAware {

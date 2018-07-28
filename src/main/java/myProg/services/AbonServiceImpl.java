@@ -19,22 +19,23 @@ public class AbonServiceImpl implements AbonService {
     }
 
 
-    @NonNull
     @Override
     public List<Abon> findAll() {
         return abonDao.findAll();
     }
 
     @Override
-    @NonNull
     public Optional<Abon> findById(@NonNull Long id) {
-        return abonDao.findById(id);
+        return abonDao.findById(id); //Throws an IllegalArgumentException when the "id" handed to the method is null.
     }
 
     @Override
-    @NonNull
-    public Long count() {
+    public long count() {
         return abonDao.count();
+    }
 
+    @Override
+    public Abon findAbonById(Long id) {
+        return abonDao.findAbonById(id); // Accepts null as the value for "id"
     }
 }
