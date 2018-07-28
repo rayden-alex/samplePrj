@@ -53,9 +53,10 @@ ext {
     junitJupiterVersion = '5.2.+'
 
     log4jVersion = '2.9.0'
-    springVersion = '5.0.7.RELEASE'
-    springSecurityVersion = '5.0.6.RELEASE'
-    hibernateVersion = '5.2.13.Final'
+    springVersion = '5.0.8.RELEASE'
+    springSecurityVersion = '5.0.7.RELEASE'
+    springDataJPAVersion = '2.0.9.RELEASE'
+    hibernateVersion = '5.3.3.Final'
 }
 
 configurations.all {
@@ -72,18 +73,15 @@ dependencies {
 
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-orm:${springVersion}"
+    compile "org.springframework.data:spring-data-jpa:${springDataJPAVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
     compile "org.springframework.boot:spring-boot-actuator:1.5.14.RELEASE"
     compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
     compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
 
-    compile("org.hibernate:hibernate-core:${hibernateVersion}") {
-        //exclude group: 'org.jboss.logging', module: 'jboss-logging'
-    }
-//    compile("org.hibernate:hibernate-java8:${hibernateVersion}"){  // С версии 5.2 включено в core
-//        exclude group: 'org.jboss.logging', module: 'jboss-logging'
-//    }
+    compile("org.hibernate:hibernate-core:${hibernateVersion}")
+    // compile("org.hibernate:hibernate-java8:${hibernateVersion}") // С версии 5.2 включено в core
 
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
@@ -96,11 +94,10 @@ dependencies {
     providedCompile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.23'
     providedCompile group: 'org.apache.tomcat', name: 'tomcat-dbcp', version: '8.5.23'
 
+    // -----------------  Database ------------------
     // provided, т.к. оба файла все равно закинуты в Tomcat/lib
-    providedCompile(group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+') {
-        exclude group: 'javax.resource', module: 'connector-api'
-    }
-    providedCompile group: 'javax.resource', name: 'connector-api', version: '1.5'
+    providedCompile(group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+')
+    //providedCompile group: 'javax.resource', name: 'connector-api', version: '1.5'
 
 
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
