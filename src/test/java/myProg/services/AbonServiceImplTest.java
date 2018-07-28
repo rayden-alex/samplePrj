@@ -85,11 +85,7 @@ class AbonServiceImplTest {
 
     @Test
     void findByIdNullTest() {
-        try {
-            service.findById(null);
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-        }
+        assertThrows(IllegalArgumentException.class, () -> service.findById(null));
     }
 }
 
