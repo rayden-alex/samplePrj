@@ -1,8 +1,8 @@
 package myProg.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import myProg.dto.Abon;
-import myProg.jpa.entity.AbonEntity;
+import myProg.domain.Abon;
+import myProg.dto.AbonDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -39,50 +38,50 @@ import java.util.Objects;
 //        you’ll be unifying all of your data-access exceptions under Spring’s exception hierar-
 //        chy, which will make it easier to swap out persistence mechanisms later.
 
-@Repository("abonDaoBean")
+//@Repository("abonDaoBean")
 @Slf4j
-public class AbonDaoImpl implements AbonDao {
+public class AbonDaoImplOld { //implements AbonDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private EntityManager entityManager;
 
-    @PersistenceContext
+    //@PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
-    @Autowired
-    public AbonDaoImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    //@Autowired
+    public AbonDaoImplOld(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @NonNull
-    @Override
+    //@Override
     @Transactional(readOnly = true)
-    public List<AbonEntity> findAll() {
-        TypedQuery<AbonEntity> query = entityManager.createQuery("select a from AbonEntity as a where a.id < :param", AbonEntity.class);
+    public List<Abon> findAll() {
+        TypedQuery<Abon> query = entityManager.createQuery("select a from Abon as a where a.id < :param", Abon.class);
         query.setParameter("param", 100L);
         query.setHint("org.hibernate.fetchSize", "200");
         return query.getResultList();
     }
 
     @Nullable
-    @Override
+    //@Override
     @Transactional(readOnly = true)
-    public AbonEntity findAbonEntityById(Long id) {
-        TypedQuery<AbonEntity> query = entityManager.createQuery("select a from AbonEntity as a where a.id = :param", AbonEntity.class);
+    public Abon findAbonEntityById(Long id) {
+        TypedQuery<Abon> query = entityManager.createQuery("select a from Abon as a where a.id = :param", Abon.class);
         query.setParameter("param", id);
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
-    @Override
-    public List<Abon> findByFio(String fio) {
+    //@Override
+    public List<AbonDto> findByFio(String fio) {
         return Collections.emptyList();
     }
 
     @NonNull
-    @Override
-    public List<Abon> findAbonById(Long id) {
+    //@Override
+    public List<AbonDto> findAbonById(Long id) {
         Objects.requireNonNull(jdbcTemplate);
 
         final String SQL = "SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID < :ID";
@@ -92,15 +91,15 @@ public class AbonDaoImpl implements AbonDao {
     }
 
     @NonNull
-    @Override
+    //@Override
     @Transactional(readOnly = true)
     public Long count() {
-        TypedQuery<Long> query = entityManager.createQuery("select count(a) from AbonEntity as a", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(a) from Abon as a", Long.class);
         return query.getSingleResult();
     }
 
-    @Override
-    public List<Abon> findFioById(Long id) {
+    //@Override
+    public List<AbonDto> findFioById(Long id) {
         Objects.requireNonNull(jdbcTemplate);
 
         final String SQL = "SELECT ID, FIO, PHONE_LOCAL FROM ABON WHERE ID <:ID1";
@@ -110,20 +109,16 @@ public class AbonDaoImpl implements AbonDao {
         return jdbcTemplate.query(SQL, namedParameters, getAbonRowMapper());
     }
 
-    private RowMapper<Abon> getAbonRowMapper() {
-        return (rs, rowNum) -> {
-            Abon abon = new Abon();
-
-            abon.setId(rs.getLong("ID"));
-            abon.setFio(rs.getString("FIO"));
-            abon.setPhone(rs.getString("PHONE_LOCAL"));
-
-            return abon;
-        };
+    private RowMapper<AbonDto> getAbonRowMapper() {
+        return (rs, rowNum) -> new AbonDto(
+                rs.getLong("ID"),
+                rs.getString("FIO"),
+                rs.getString("PHONE_LOCAL")
+        );
     }
 
 
-    @Override
+    //@Override
     public void writeFioById(Long id, RowCallbackHandler rch) {
         Objects.requireNonNull(jdbcTemplate);
 

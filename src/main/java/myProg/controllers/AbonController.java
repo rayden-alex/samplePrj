@@ -1,12 +1,13 @@
 package myProg.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import myProg.jpa.entity.AbonEntity;
+import myProg.domain.Abon;
 import myProg.services.AbonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,36 +33,32 @@ public class AbonController {
             produces = {
                     MediaType.APPLICATION_XML_VALUE, // jackson-dataformat-xml dependency in build.gradle needed!!!
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<AbonEntity> abonEntity(@PathVariable Long id) {
+    public ResponseEntity<Abon> abonEntity(@PathVariable Long id) {
         log.info("{}: initialization started", getClass().getSimpleName());
         log.info("id={}", id);
 
-        AbonEntity entity = abonService.findById(id);
+        return abonService.findById(id)
+                .map(ResponseEntity::ok) //  ResponseEntity.status(HttpStatus.OK).body(entity);
+                .orElseGet(() -> buildBadResponse("Abon not found by ID")); // Формирование ответа и ошибки вручную
+    }
 
-        if (entity == null) { // Формирование ответа и ошибки вручную
-            return ResponseEntity
-                    .badRequest()
-                    .header("Error message", "Abon not found by ID")
-                    .build();
-        } else {
-            return ResponseEntity.ok(entity);//  ResponseEntity.status(HttpStatus.OK).body(entity);
-        }
+    @NonNull
+    private ResponseEntity<Abon> buildBadResponse(String msg) {
+        return ResponseEntity
+                .badRequest()
+                .header("Error message", msg)
+                .build();
     }
 
     @GetMapping(path = "/abonById/{id}",
             produces = {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public AbonEntity abonEntityById(@PathVariable Long id) {
+    public Abon abonEntityById(@PathVariable Long id) {
         // http://www.baeldung.com/exception-handling-for-rest-with-spring
         // http://www.baeldung.com/global-error-handler-in-a-spring-rest-api
 
-        AbonEntity entity = abonService.findById(id);
-
-        if (entity == null) { // Формирование ответа и ошибки Спрингом (ошибка через @ResponseStatus в Exception)
-            throw new AbonNotFoundException(id);
-        } else {
-            return entity;
-        }
+        return abonService.findById(id)
+                .orElseThrow(() -> new AbonNotFoundException(id)); // Формирование ответа и ошибки Спрингом (ошибка через @ResponseStatus в Exception)
     }
 }

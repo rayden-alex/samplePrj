@@ -1,37 +1,9 @@
 package myProg.dao;
 
-import myProg.dto.Abon;
-import myProg.jpa.entity.AbonEntity;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import myProg.domain.Abon;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-
-public interface AbonDao {
-    @NonNull
-    List<AbonEntity> findAll();
-
-    @Nullable
-    AbonEntity findAbonEntityById(Long id);
-
-    List<Abon> findByFio(String fio);
-
-    @NonNull
-    List<Abon> findAbonById(Long id);
-
-    @NonNull
-    Long count();
-
-    List<Abon> findFioById(Long id);
-    void writeFioById(Long id, RowCallbackHandler rch);
-
-//        List<Abon> findAllWithDetail();
-//
-//        void insert(Abon contact);
-//
-//        void insertWithDetail(Abon contact);
-//
-//        void update(Abon contact);
+@Repository
+public interface AbonDao extends JpaRepository<Abon, Long> {
 }

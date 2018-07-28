@@ -1,4 +1,4 @@
-package myProg.jpa.entity;
+package myProg.domain;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Getter;
@@ -24,10 +24,10 @@ import java.util.Objects;
 @XmlRootElement(name = "abon") // JAXB annotation - not working
 @JsonRootName(value = "abon")
 // Jackson annotation - it works depends on precedence of `AnnotationIntrospector's included (Jackson's own vs JAXB).
-public class AbonEntity {
+public class Abon {
     @Id
     @Column(name = "ID", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "REGION")
@@ -92,8 +92,8 @@ public class AbonEntity {
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof AbonEntity)) return false;
-        final AbonEntity other = (AbonEntity) o;
+        if (!(o instanceof Abon)) return false;
+        final Abon other = (Abon) o;
 
         return other.canEqual(this)
                 && (getId() != null)
@@ -106,7 +106,7 @@ public class AbonEntity {
     }
 
     protected boolean canEqual(Object other) {
-        return (other instanceof AbonEntity);
+        return (other instanceof Abon);
     }
 
 //    https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
@@ -118,6 +118,8 @@ public class AbonEntity {
 //        // но т.к. присваевается id, то надо либо включать все поля кроме id
 //        // (что может дать коллизию при двух одинаковых записях в БД различающихся только id)
 //        // или не включать вообще ни одного поля (проблемы только при ОЧЕНЬ больших мапах)
+//        // By the time the constant hashCode becomes your bottleneck,
+//        // you had to fetch millions of records which already took a lot of time.
 //        return 31;
 //    }
 

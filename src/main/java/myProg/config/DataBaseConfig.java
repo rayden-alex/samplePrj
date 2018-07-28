@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -20,7 +21,8 @@ import java.util.Properties;
 
 @Slf4j
 @Configuration
-@EnableTransactionManagement()
+@EnableJpaRepositories(value = "myProg.dao")
+@EnableTransactionManagement
 @PropertySource("classpath:jdbc.properties") //${my.placeholder:default/path}
 public class DataBaseConfig {
 
@@ -137,7 +139,10 @@ public class DataBaseConfig {
     //real EntityManager. That real EntityManager either is one associated with the cur-
     //rent transaction or, if one doesn’t exist, creates a new one. Thus, you know that you’re
     //always working with an entity manager in a thread-safe way.
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource) {
+
+    // Spring Data JPA requires a EntityManagerFactory bean named entityManagerFactory to be present
+    // if no explicit EnableJpaRepositories.entityManagerFactoryRef is defined.
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
         emfb.setDataSource(dataSource);
         emfb.setJpaVendorAdapter(new HibernateJpaVendorAdapter()); //  ???     META-INF/__p_rsistence.xml:5      hibernate.properties:1
@@ -150,7 +155,7 @@ public class DataBaseConfig {
         //   Т.е. при скане создается "default" PersistenceUnit и задавать другое имя нельзя!
         //   (ну или если создать отдельные PersistenceUnitManager )
         //   https://stackoverflow.com/questions/21180785/property-packagestoscan-not-working
-        emfb.setPackagesToScan("myProg.jpa.entity"); // Работает только в конфигурации БЕЗ!!! persistence.xml, т.е. его вообще не должно быть, даже пустого.
+        emfb.setPackagesToScan("myProg.domain"); // Работает только в конфигурации БЕЗ!!! persistence.xml, т.е. его вообще не должно быть, даже пустого.
 
         //  emfb.setPersistenceUnitName("FirebirdPersistenceUnit"); // Нужно только при наличии нескольких PersistenceUnit
 
@@ -159,6 +164,8 @@ public class DataBaseConfig {
         jpaProperties.setProperty("hibernate.show_sql", "true");
         jpaProperties.setProperty("hibernate.format_sql", "true");
         jpaProperties.setProperty("hibernate.use_sql_comments", "true");
+
+        //jpaProperties.setProperty("hibernate.generate_statistics", "true");
 
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProperties.setProperty("hibernate.generateDdl", "false");
@@ -180,6 +187,8 @@ public class DataBaseConfig {
 //        return htm;
 //    }
     @Bean
+    // Spring Data JPA requires a PlatformTransactionManager bean named transactionManager to be present
+    // if no explicit transaction-manager-ref is defined.
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);  //  ????
     }
