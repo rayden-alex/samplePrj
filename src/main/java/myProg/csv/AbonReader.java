@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
+import myProg.csv.entries.AbonEntry;
+import myProg.csv.processors.EntryProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,6 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -28,12 +29,15 @@ public class AbonReader {
 
     private CsvMapper mapper;
     private CsvSchema schema;
+    private EntryProcessor<AbonEntry> entryProcessor;
 
     @Autowired
-    AbonReader(@NonNull CsvMapper mapper) {
+    AbonReader(@NonNull CsvMapper mapper, @NonNull EntryProcessor<AbonEntry> entryProcessor) {
         log.info("{}: initialization started", getClass().getSimpleName());
 
         this.mapper = mapper;
+        this.entryProcessor = entryProcessor;
+
         schema = mapper
                 .schema()
                 // .schemaFor(AbonEntry.class)   // !!! Не нужно указывать!  Схема создастся по Header-у
@@ -44,7 +48,7 @@ public class AbonReader {
         log.info("{}: initialization completed", getClass().getSimpleName());
     }
 
-    public List<AbonEntry> readFromFile(String fileName) throws IOException {
+    public void readFromFile(String fileName) throws IOException {
         try (Reader fileReader = Files.newBufferedReader(Paths.get(fileName), FILE_CHARSET)) {
 
             MappingIterator<AbonEntry> it = mapper
@@ -56,12 +60,12 @@ public class AbonReader {
                     // .with( CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
                     .readValues(fileReader);
 
-            //        while (it.hasNext()) {
-//            AbonEntry row = it.next();
-//            System.out.println(row);
-//        }
+            while (it.hasNext()) {
+                AbonEntry row = it.next();
+                entryProcessor.process(row);
+            }
 
-            return it.readAll();
+            //return it.readAll();
         }
     }
 }

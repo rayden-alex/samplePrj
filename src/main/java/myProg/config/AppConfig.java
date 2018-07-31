@@ -3,6 +3,9 @@ package myProg.config;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
+import myProg.csv.processors.AbonEntryProcessor;
+import myProg.csv.processors.DeptEntryProcessor;
+import myProg.csv.processors.OrgEntryProcessor;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,11 +37,25 @@ public class AppConfig implements EnvironmentAware {
         System.setProperty("management.security.enabled", "false");
     }
 
-    @NonNull
     @Bean
     public CsvMapper csvFileMapper() {
         return (CsvMapper) new CsvMapper().registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
 
+    }
+
+    @Bean
+    public AbonEntryProcessor abonEntryProcessor() {
+        return new AbonEntryProcessor();
+    }
+
+    @Bean
+    public OrgEntryProcessor orgEntryProcessor() {
+        return new OrgEntryProcessor();
+    }
+
+    @Bean
+    public DeptEntryProcessor deptEntryProcessor() {
+        return new DeptEntryProcessor();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package myProg.csv;
+package myProg.csv.entries;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,9 +18,6 @@ public class AbonEntry {
     @JsonProperty("account")
     private Integer account;
 
-    @JsonProperty("account_check")
-    private Integer accountCheck;
-
     @JsonProperty("phone_local")
     private String phoneLocal;
 
@@ -29,9 +26,6 @@ public class AbonEntry {
 
     @JsonProperty("phone_category")
     private Integer phoneCategory;
-    //   private Integer type;
-    //   private Integer phone_features;
-    //   private Integer territory_type;
 
     @JsonProperty("surname")
     private String surname;
@@ -48,10 +42,6 @@ public class AbonEntry {
     @JsonProperty("contract_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate contractDate;
-    //   private Integer beneficiary;
-    //   private Integer lg;
-    //   private Integer gls;
-    //   private Integer resident_code_ok;
 
     @JsonProperty("city_code")
     private Integer cityId;
