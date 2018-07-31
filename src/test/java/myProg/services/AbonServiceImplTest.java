@@ -85,7 +85,19 @@ class AbonServiceImplTest {
 
     @Test
     void findByIdNullTest() {
-        assertThrows(IllegalArgumentException.class, () -> service.findById(null));
+        Class exp = IllegalArgumentException.class;
+
+        try {
+            service.findById(null);
+        } catch (Throwable actualException) {
+            if (exp.isInstance(actualException) || exp.isInstance(actualException.getCause())) {
+                return;
+            } else {
+                fail("Unexpected exception type thrown", actualException);
+            }
+        }
+
+        fail("Expected IllegalArgumentException to be thrown, but nothing was thrown.");
     }
 }
 
