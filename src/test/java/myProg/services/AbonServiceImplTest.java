@@ -46,12 +46,12 @@ class AbonServiceImplTest {
     private AbonService service;
 
     @Autowired
-    public void setService(AbonService service) {
+    void setService(AbonService service) {
         this.service = service;
     }
 
     @Test
-    public void countTest() {
+    void countTest() {
         Long cnt = service.count();
 
         log.info("SLF4 test");
