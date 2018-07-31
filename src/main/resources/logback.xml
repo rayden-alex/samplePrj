@@ -10,8 +10,11 @@
         </encoder>
     </appender>
 
-    <appender name="FILE-AUDIT"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!-- logging INFO or above levels only -->
+            <level>INFO</level>
+        </filter>
         <file>${DEV_HOME}/audit.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
@@ -28,8 +31,11 @@
 
     </appender>
 
-    <appender name="FILE-ERROR"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!-- logging ERROR or above levels only -->
+            <level>ERROR</level>
+        </filter>
         <file>${DEV_HOME}/error.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
@@ -58,14 +64,11 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="error">
-        <appender-ref ref="FILE-ERROR"/>
-    </root>
-
-    <!-- Send logs to both console and file audit -->
-    <root level="info">
+    <!-- Send logs to both console and files  -->
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-AUDIT"/>
+        <appender-ref ref="FILE-ERROR"/>
     </root>
 
 </configuration>
