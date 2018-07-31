@@ -119,6 +119,7 @@ dependencies {
     testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
 
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.+'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.+'
     testImplementation(group: 'org.dbunit', name: 'dbunit', version: '+') {
         exclude group: 'junit'
     }
