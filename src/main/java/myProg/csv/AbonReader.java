@@ -8,6 +8,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import myProg.csv.entries.AbonEntry;
 import myProg.csv.processors.EntryProcessor;
+import myProg.services.CityService;
+import myProg.services.CityTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,8 @@ public class AbonReader {
     private CsvMapper mapper;
     private CsvSchema schema;
     private EntryProcessor<AbonEntry> entryProcessor;
+
+
 
     @Autowired
     AbonReader(@NonNull CsvMapper mapper, @NonNull EntryProcessor<AbonEntry> entryProcessor) {
@@ -65,7 +69,8 @@ public class AbonReader {
                 entryProcessor.process(row);
             }
 
-            //return it.readAll();
+            log.info("\n\n\n====Saving data to DB =======");
+            entryProcessor.saveToDB();
         }
     }
 }

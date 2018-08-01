@@ -23,8 +23,8 @@ public class Street {
     @Column(name = "ID", updatable = false, nullable = false)
     private Integer id;
 
-    @Column(name = "STREET_TYPE")
-    private Short streetTypeId;
+//    @Column(name = "STREET_TYPE")
+//    private Short streetTypeId;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "STREET_TYPE", nullable = false)

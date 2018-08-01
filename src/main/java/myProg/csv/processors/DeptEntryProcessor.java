@@ -7,4 +7,9 @@ public class DeptEntryProcessor implements EntryProcessor<DeptEntry> {
     public void process(DeptEntry entry) {
         //
     }
+
+    @Override
+    public void saveToDB() {
+        //
+    }
 }

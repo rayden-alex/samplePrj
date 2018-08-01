@@ -21,7 +21,7 @@ public class CityType {
 
     @Id
     @Column(name = "ID", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
     @Column(name = "NAME")

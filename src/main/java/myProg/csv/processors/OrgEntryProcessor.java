@@ -7,4 +7,9 @@ public class OrgEntryProcessor implements EntryProcessor<OrgEntry> {
     public void process(OrgEntry entry) {
        //
     }
+
+    @Override
+    public void saveToDB() {
+        //
+    }
 }

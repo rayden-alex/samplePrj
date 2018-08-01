@@ -62,7 +62,7 @@ public class DataBaseConfig {
     //    <param-name>spring.profiles.active</param-name>
     //    <param-value>prod</param-value>
     //  </context-param>   ---- работает.   ВЫБРАН ЭТОТ СПОСОБ!
-    @Bean(name = "dataSource")//, destroyMethod = "close")
+    @Bean(name = "dataSource")//, destroyMethod = "close")   === devDataSource
     public DataSource jndiDataSource() {
         DataSource ds = new JndiDataSourceLookup().getDataSource(jndiDbUrl);
         log.info("==================JNDI DataSource params===============----------");
@@ -95,7 +95,7 @@ public class DataBaseConfig {
 
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
-        ds.setValidationQuery(validationQuery);
+        //ds.setValidationQuery(validationQuery); //If not specified, connections will be validation by the isValid() method.
         ds.setValidationInterval(validationInterval);
 
         log.info("==================dev DataSource params===============----------");
@@ -119,7 +119,7 @@ public class DataBaseConfig {
 
         ds.setDefaultAutoCommit(false);
         ds.setRollbackOnReturn(true);
-        ds.setValidationQuery(validationQuery);
+        //ds.setValidationQuery(validationQuery); //If not specified, connections will be validation by the isValid() method.
         ds.setValidationInterval(validationInterval);
 
         log.info("==================test DataSource params===============----------");
@@ -162,15 +162,18 @@ public class DataBaseConfig {
 
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("hibernate.show_sql", "true");
-        jpaProperties.setProperty("hibernate.format_sql", "true");
+        jpaProperties.setProperty("hibernate.format_sql", "false");
         jpaProperties.setProperty("hibernate.use_sql_comments", "true");
 
-        //jpaProperties.setProperty("hibernate.generate_statistics", "true");
+        jpaProperties.setProperty("hibernate.generate_statistics", "false");
 
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProperties.setProperty("hibernate.generateDdl", "false");
         jpaProperties.setProperty("hibernate.dialect", "myProg.config.Firebird3CustomDialect");
         jpaProperties.setProperty("hibernate.jdbc.fetch_size", "100");
+
+        jpaProperties.setProperty("hibernate.id.new_generator_mappings", "true");
+        jpaProperties.setProperty("hibernate.jdbc.batch_size", "10");
 
         emfb.setJpaProperties(jpaProperties);
 
