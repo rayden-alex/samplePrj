@@ -1,10 +1,10 @@
 package myProg.services;
 
 import lombok.extern.slf4j.Slf4j;
-import myProg.csv.processors.CityWithType;
 import myProg.dao.CityDao;
 import myProg.dao.CityTypeDao;
 import myProg.domain.City;
+import myProg.dto.CityWithType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

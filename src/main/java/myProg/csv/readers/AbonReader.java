@@ -1,4 +1,4 @@
-package myProg.csv;
+package myProg.csv.readers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import myProg.csv.entries.AbonEntry;
-import myProg.csv.processors.EntryProcessor;
+import myProg.csv.processors.AbonEntryProcessor;
 import myProg.services.CityService;
 import myProg.services.CityTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,13 @@ import java.nio.file.Paths;
 
 @Component
 @Slf4j
-public class AbonReader {
+public class AbonReader implements RecordReader {
+
+    @Autowired
+    private CityTypeService cityTypeService;
+
+    @Autowired
+    private CityService cityService;
 
     private static final String NULL_VALUE = "(null)";
     private static final char DELIMITER = ';';
@@ -31,18 +37,17 @@ public class AbonReader {
 
     private CsvMapper mapper;
     private CsvSchema schema;
-    private EntryProcessor<AbonEntry> entryProcessor;
-
+    private AbonEntryProcessor entryProcessor;
 
 
     @Autowired
-    AbonReader(@NonNull CsvMapper mapper, @NonNull EntryProcessor<AbonEntry> entryProcessor) {
+    public AbonReader(@NonNull CsvMapper mapper, @NonNull AbonEntryProcessor entryProcessor) {
         log.info("{}: initialization started", getClass().getSimpleName());
 
         this.mapper = mapper;
         this.entryProcessor = entryProcessor;
 
-        schema = mapper
+        this.schema = mapper
                 .schema()
                 // .schemaFor(AbonEntry.class)   // !!! Не нужно указывать!  Схема создастся по Header-у
                 .withHeader()
@@ -52,6 +57,7 @@ public class AbonReader {
         log.info("{}: initialization completed", getClass().getSimpleName());
     }
 
+    @Override
     public void readFromFile(String fileName) throws IOException {
         try (Reader fileReader = Files.newBufferedReader(Paths.get(fileName), FILE_CHARSET)) {
 
@@ -68,9 +74,17 @@ public class AbonReader {
                 AbonEntry row = it.next();
                 entryProcessor.process(row);
             }
-
-            log.info("\n\n\n====Saving data to DB =======");
-            entryProcessor.saveToDB();
         }
+    }
+
+    @Override
+    public void saveToDB() {
+        log.info("\n\n\n======= {}: Deleting old data in DB =======", getClass().getSimpleName());
+        cityService.deleteAllInBatch();
+        cityTypeService.deleteAllInBatch();
+
+        log.info("\n\n\n======= {}: Saving data to DB =======", getClass().getSimpleName());
+        cityTypeService.saveAll(entryProcessor.getCityType());
+        cityService.saveAll(entryProcessor.getCity());
     }
 }

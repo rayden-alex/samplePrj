@@ -1,13 +1,7 @@
 package myProg.config;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
-import myProg.csv.processors.AbonEntryProcessor;
-import myProg.csv.processors.DeptEntryProcessor;
-import myProg.csv.processors.OrgEntryProcessor;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,34 +23,16 @@ import java.util.Arrays;
 // Все равно потом все бины собираются в
 
 @ComponentScan("myProg.services")
-@ComponentScan("myProg.csv")
-@Import({DataBaseConfig.class/*, SecurityConfig.class**/})
+@Import({
+        DataBaseConfig.class,
+        CsvConfig.class
+        /*, SecurityConfig.class**/})
 public class AppConfig implements EnvironmentAware {
 
     static {
         System.setProperty("management.security.enabled", "false");
     }
 
-    @Bean
-    public CsvMapper csvFileMapper() {
-        return (CsvMapper) new CsvMapper().registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
-
-    }
-
-    @Bean
-    public AbonEntryProcessor abonEntryProcessor() {
-        return new AbonEntryProcessor();
-    }
-
-    @Bean
-    public OrgEntryProcessor orgEntryProcessor() {
-        return new OrgEntryProcessor();
-    }
-
-    @Bean
-    public DeptEntryProcessor deptEntryProcessor() {
-        return new DeptEntryProcessor();
-    }
 
     @Override
     public void setEnvironment(@NonNull Environment environment) {

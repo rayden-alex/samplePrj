@@ -1,7 +1,7 @@
 package myProg.csv.processors;
 
-import myProg.csv.Address;
 import myProg.csv.entries.AbonEntry;
+import myProg.dto.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,6 @@ class AbonEntryProcessorTest {
         assertEquals("Витебск", address.getCityName());
         assertEquals("пр-т", address.getStreetPref());
         assertEquals("Победы", address.getStreetName());
-
     }
 
     @Test
@@ -50,14 +49,11 @@ class AbonEntryProcessorTest {
         assertEquals("Витебск", address.getCityName());
         assertNull(address.getStreetPref());
         assertNull(address.getStreetName());
-
     }
 
     @Test
     void extractAddressTest3() {
         abon.setAddress("г. Витебск");
-//        abon.setBuilding("д.21 корп.2");
-//        abon.setRoom("кв.96");
 
         Address address = processor.extractAddress(abon);
 
@@ -80,12 +76,11 @@ class AbonEntryProcessorTest {
         assertEquals("Руба", address.getCityName());
         assertEquals("ул.", address.getStreetPref());
         assertEquals("Гралевская", address.getStreetName());
-
     }
 
     @Test
     void commaDelimitedListToStringListTest() {
-        List<String> actList = processor.commaDelimitedListToStringList("г. Витебск, пр-т Победы, д.21 корп.2, кв.96");
+        List<String> actList = processor.commaDelimitedStringToList("г. Витебск, пр-т Победы, д.21 корп.2, кв.96");
         List<String> expList = Arrays.asList("г. Витебск", "пр-т Победы", "д.21 корп.2", "кв.96");
         assertThat(actList, is(expList));
     }

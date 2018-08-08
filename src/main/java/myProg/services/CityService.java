@@ -1,6 +1,6 @@
 package myProg.services;
 
-import myProg.csv.processors.CityWithType;
+import myProg.dto.CityWithType;
 
 import java.util.Map;
 

@@ -1,12 +1,13 @@
 package myProg.csv.processors;
 
 import lombok.Getter;
-import myProg.csv.Address;
+import lombok.extern.slf4j.Slf4j;
 import myProg.csv.entries.AbonEntry;
-import myProg.services.CityService;
-import myProg.services.CityTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import myProg.dto.Address;
+import myProg.dto.CityWithType;
+import myProg.dto.StreetWithType;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -14,14 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
+@Slf4j
 @Getter
 public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
-    @Autowired
-    private CityTypeService cityTypeService;
-
-    @Autowired
-    private CityService cityService;
-
     private Map<String, Short> streetType = new HashMap<>();
     private Map<String, Short> cityType = new HashMap<>();
     private Map<StreetWithType, Integer> street = new HashMap<>();
@@ -56,20 +53,9 @@ public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
             street.putIfAbsent(streetWithType, entry.getStreetId());
         }
 
-
-    }
-
-    @Override
-    public void saveToDB() {
-        cityService.deleteAllInBatch();
-        cityTypeService.deleteAllInBatch();
-
-        cityTypeService.saveAll(cityType);
-        cityService.saveAll(city);
     }
 
     Address extractAddress(AbonEntry abon) {
-        Address address = new Address();
         String adr = abon.getAddress();
 
         // Убираем известные части из полного адреса
@@ -82,8 +68,9 @@ public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
             adr = removeFromEnd(adr, abon.getBuilding());
             adr = removeFromEnd(adr, ", ");
         }
-        List<String> adrList = commaDelimitedListToStringList(adr);
         // Должны остаться только "город и улица" или "город"
+        List<String> adrList = commaDelimitedStringToList(adr);
+        Address address = new Address();
         switch (adrList.size()) {
             case 2:
                 String[] street = adrList.get(1).split(" ", 2);
@@ -111,7 +98,7 @@ public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
         return str;
     }
 
-    List<String> commaDelimitedListToStringList(@NonNull String str) {
+    List<String> commaDelimitedStringToList(@NonNull String str) {
         final String delimiter = ", ";
 
         List<String> result = new ArrayList<>();
