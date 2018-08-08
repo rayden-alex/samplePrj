@@ -33,6 +33,8 @@ apply plugin: 'war'
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
 
 war {
     baseName = 'gs-rest'
@@ -212,13 +214,13 @@ test {
 
 build {
     doFirst {
-        logger.quiet("Gradle version: {}   buildTime: {}", GradleVersion.current().getVersion(), GradleVersion.current().getBuildTime())
+        logger.quiet("Gradle version: {}   buildTime: {}", gradle.gradleVersion, GradleVersion.current().getBuildTime())
     }
 }
 
 clean {
     doFirst {
-        logger.quiet("Gradle version: {}   buildTime: {}", GradleVersion.current().getVersion(), GradleVersion.current().getBuildTime())
+        logger.quiet("Gradle version: {}   buildTime: {}", gradle.gradleVersion, GradleVersion.current().getBuildTime())
     }
 
 }
