@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import myProg.config.AppConfig;
 import myProg.csv.entries.AbonEntry;
 import myProg.csv.processors.AbonEntryProcessor;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +14,12 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.*;
 @Slf4j
 
 @ActiveProfiles({"default", "test"})
+@TestPropertySource("classpath:jdbc-test.properties")
 @SpringJUnitConfig(AppConfig.class)
 @ExtendWith(MockitoExtension.class)
 class AbonReaderTest {
@@ -32,6 +36,9 @@ class AbonReaderTest {
 
     @Autowired
     private AbonReader readerBean;
+
+    @Autowired
+    private DataSource dataSourceBean;
 
     @Mock
     private AbonEntryProcessor entryProcessorMock;
@@ -44,14 +51,22 @@ class AbonReaderTest {
     }
 
     @Test
+    void jdbcPropertiesTest() {
+        final String expectedUrl = "jdbc:firebirdsql://localhost:3050/d:\\DB\\FB_BASES_TEST.FDB";
+        String actualUrl = dataSourceBean.getUrl();
+
+        assertEquals(expectedUrl, actualUrl);
+    }
+
+    @Test
     void readFromFileMockTest() throws IOException {
         AbonReader reader = new AbonReader(mapperBean, entryProcessorMock);
 
         // реализация мока с подменой НЕ РЕЗУЛЬТАТА вызова метода,
         // а с подменой самой РЕАЛИЗАЦИИ метода
         doAnswer(invocation -> {
-            AbonEntry abonEntry = invocation.getArgument(0);
-            System.out.println(abonEntry);
+            AbonEntry entry = invocation.getArgument(0);
+            log.info(entry.toString());
             return null;
         }).when(entryProcessorMock).process(any(AbonEntry.class));
 
@@ -72,7 +87,7 @@ class AbonReaderTest {
     static abstract class AbonEntryProcessorStub extends AbonEntryProcessor {
         @Override
         public void process(AbonEntry entry) {
-            System.out.println(entry);
+            log.info(entry.toString());
         }
     }
 
