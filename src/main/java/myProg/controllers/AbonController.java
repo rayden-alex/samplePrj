@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import myProg.domain.Abon;
 import myProg.services.AbonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Lazy
 @Slf4j
 public class AbonController {
 
@@ -29,7 +31,8 @@ public class AbonController {
         return "Welcome to RestTemplate Example.";
     }
 
-    @GetMapping(path = "/abon/{id}",
+    @GetMapping(
+            path = "/abon/{id}",
             produces = {
                     MediaType.APPLICATION_XML_VALUE, // jackson-dataformat-xml dependency in build.gradle needed!!!
                     MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -50,7 +53,8 @@ public class AbonController {
                 .build();
     }
 
-    @GetMapping(path = "/abonById/{id}",
+    @GetMapping(
+            path = "/abonById/{id}",
             produces = {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_UTF8_VALUE})

@@ -5,6 +5,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 
@@ -12,6 +13,7 @@ import java.util.Arrays;
 
 @Slf4j
 @Configuration
+@Lazy
 
 // WebApplicationContext (Root namespace)
 // Здесь указываем где искать прочие бины (не относящиеся к вебу). Хотя можно сканить вообще все - но долго.

@@ -3,6 +3,7 @@ package myProg.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 @Configuration
+@Lazy
 
 // WebApplicationContext (dispatcher-servlet namespace, parent: Root WebApplicationContext)
 // Обязательно указываем где надо искать все относящиеся к вебу бины: контроллеры, фильтры, хендлеры и т.д.

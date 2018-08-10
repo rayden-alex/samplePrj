@@ -6,12 +6,14 @@ import myProg.dao.CityTypeDao;
 import myProg.domain.City;
 import myProg.dto.CityWithType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Map;
 
 @Service
+@Lazy
 @Slf4j
 public class CityServiceImpl implements CityService {
     private final CityDao cityDao;
