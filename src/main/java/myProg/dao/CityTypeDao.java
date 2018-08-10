@@ -1,7 +1,6 @@
 package myProg.dao;
 
 import myProg.domain.CityType;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CityTypeDao extends JpaRepository<CityType, Short> {
+public interface CityTypeDao extends MyJpaRepository<CityType, Short> {
 }

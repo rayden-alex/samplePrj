@@ -37,10 +37,7 @@ public class CityServiceImpl implements CityService {
             city.setCityType(cityTypeDao.getOne(k.getType()));
             city.setName(k.getName());
 
-            // todo Create custom repository to access entityManager
-            // and use "persist" instead of "save"
-            // https://stackoverflow.com/questions/30874214/how-to-access-entity-manager-with-spring-boot-and-spring-data
-            cityDao.save(city);
+            cityDao.insert(city);
         });
     }
 

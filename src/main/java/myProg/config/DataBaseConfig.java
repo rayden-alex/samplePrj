@@ -1,11 +1,9 @@
 package myProg.config;
 
 import lombok.extern.slf4j.Slf4j;
+import myProg.dao.MyJpaRepositoryImpl;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -21,7 +19,8 @@ import java.util.Properties;
 
 @Slf4j
 @Configuration
-@EnableJpaRepositories("myProg.dao")
+@Lazy
+@EnableJpaRepositories(basePackages = "myProg.dao", repositoryBaseClass = MyJpaRepositoryImpl.class)
 @EnableTransactionManagement
 @PropertySource("classpath:jdbc.properties") //${my.placeholder:default/path}
 public class DataBaseConfig {

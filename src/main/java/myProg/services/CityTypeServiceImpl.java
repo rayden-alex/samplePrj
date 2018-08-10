@@ -29,7 +29,7 @@ public class CityTypeServiceImpl implements CityTypeService {
             cityType.setName(k);
             cityType.setShortName("");
 
-            cityTypeDao.save(cityType);
+            cityTypeDao.insert(cityType);
         });
     }
 
