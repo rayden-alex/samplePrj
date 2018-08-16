@@ -1,26 +1,34 @@
 package myProg.services;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import myProg.config.AppConfig;
+import myProg.config.DbUnitConfig;
 import myProg.domain.Abon;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 //@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {AppConfig.class})   ---------->   @SpringJUnitConfig(AppConfig.class)
+@SpringJUnitConfig({AppConfig.class, DbUnitConfig.class})
 
-@SpringJUnitConfig(AppConfig.class)
-
-//Spring provides the following TestExecutionListener implementations that are registered by default, exactly in this order.
+// Spring provides the following TestExecutionListener implementations that are registered by default, exactly in this order.
 // ServletTestExecutionListener: configures Servlet API mocks for a WebApplicationContext
 // DirtiesContextBeforeModesTestExecutionListener: handles the @DirtiesContext annotation for before modes
 // DependencyInjectionTestExecutionListener: provides dependency injection for the test instance
@@ -35,13 +43,38 @@ import static org.junit.jupiter.api.Assertions.*;
 // the mergeMode attribute of @TestExecutionListeners can be set to MergeMode.MERGE_WITH_DEFAULTS.
 @TestExecutionListeners(value = {
         //  DependencyInjectionTestExecutionListener.class, //  по дефолту этот Listener и так подключен, но если нужно подключить еще что-то, то надо указывать полный список или менять mergeMode на MERGE_WITH_DEFAULTS
-        DbUnitTestExecutionListener.class
+        DbUnitTestExecutionListener.class  //TransactionDbUnitTestExecutionListener.class
 }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 
 @ActiveProfiles({"default", "test"})
+@TestPropertySource("classpath:jdbc-test.properties")
 @Slf4j
 //@Disabled
-//@DbUnitConfiguration(databaseConnection={"testDataSource"})   // mast be "dataSource" bean or set it explicitly
+
+// https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-integration-testing/
+@DatabaseSetup("classpath:db/abon_testdata.xml")
+
+
+/**
+ * @see DbUnitConfig#getDatabaseDataSourceConnectionFactoryBean()
+ */
+@DbUnitConfiguration(databaseConnection = "dbUnitDatabaseConnection")
+
+/**
+ * Annotating a test method with @Transactional causes the test to be run within a transaction
+ * that will, by default, be automatically rolled back after completion of the test.
+ * If a test class is annotated with @Transactional, each test method within that class hierarchy will be run within a transaction.
+ * Test methods that are not annotated with @Transactional (at the class or method level) will not be run within a transaction.
+ *
+ * Чтобы видеть данные вставленные @DatabaseSetup("classpath:db/abon_testdata.xml") тестовый метод
+ * должен выполнятся в той же транзакции,что и @DatabaseSetup (т.е. она должна начаться ДО выполнения тестового метода)
+ * с этим как раз помогает @Transactional,
+ * или должен быть включен автокоммит в настройках Datasource.
+ * (Но тогда все вставленные данные надо чистить вручную в методе аннотированом @DatabaseTearDown)
+ *
+ * @see TransactionalTestExecutionListener
+ */
+@Transactional
 class AbonServiceImplTest {
     private AbonService service;
 
@@ -50,12 +83,33 @@ class AbonServiceImplTest {
         this.service = service;
     }
 
+    @Autowired
+    private DataSource dataSourceBean;
+
+    @BeforeTransaction
+    @Sql(statements = "alter table ABON alter column ID RESTART WITH 0;")
+    void resetAbonAutoIncrementColumn() {
+        //do nothing
+    }
+
     @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void jdbcPropertiesTest() {
+        final String expectedUrl = "jdbc:firebirdsql://localhost:3050/d:\\DB\\FB_BASES_TEST.FDB";
+        String actualUrl = dataSourceBean.getUrl();
+
+        assertEquals(expectedUrl, actualUrl);
+    }
+
+    @Test
+        //@Transactional
+        //@Sql(statements = "alter table ABON alter column ID RESTART WITH 0;")
+        //@Commit
     void countTest() {
         Long cnt = service.count();
 
-        log.info("SLF4 test");
-        assertEquals(653191L, cnt.longValue());
+        log.info("SLF4 countTest");
+        assertEquals(100L, cnt.longValue());
     }
 
     @Test
