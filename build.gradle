@@ -2,16 +2,11 @@ buildscript {
     repositories {
         jcenter()
     }
-
-// from Gradle 4.6 include native support JUnit test ---> gradle-plugin no needed anymore
-//    dependencies {
-//        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
-//    }
 }
 
 plugins {
     // Gradle-apt-plugin
-    //  id 'net.ltgt.apt' version '0.18'
+    // id 'net.ltgt.apt' version '0.18'
 
     // https://habrahabr.ru/post/345520/
     // https://github.com/tbroyer/gradle-apt-plugin
@@ -23,7 +18,7 @@ plugins {
     // the only difference would be that no generated source is written to disk.
 
     // JMH Gradle Plugin
-    id "me.champeau.gradle.jmh" version "0.4.7"  //https://github.com/melix/jmh-gradle-plugin
+    // id 'me.champeau.gradle.jmh' version '0.4.7'  //https://github.com/melix/jmh-gradle-plugin
 }
 
 group 'samples'
@@ -33,17 +28,14 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 apply plugin: 'idea'
 
-// from Gradle 4.6 include native support JUnit test ---> gradle-plugin no needed anymore
-// apply plugin: 'org.junit.platform.gradle.plugin'
-
 apply plugin: 'war'
 
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 war {
     baseName = 'gs-rest'
@@ -72,7 +64,7 @@ ext {
 
 configurations.all {
     // Убирает зависимость Spring от commons-logging
-    exclude group: "commons-logging", module: "commons-logging"
+    exclude group: 'commons-logging', module: 'commons-logging'
 }
 
 dependencies {
@@ -148,36 +140,11 @@ dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.+'
     //testCompile 'org.assertj:assertj-db:1.2.0'
 
-
-
     // ========== JMH micro-benchmarking framework ====================
-    jmh 'org.openjdk.jmh:jmh-core:1.21'
-    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.21'
+    // jmh 'org.openjdk.jmh:jmh-core:1.21'
+    // jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.21'
 }
 
-//junitPlatform { // <--------  from 'org.junit.platform.gradle.plugin'. No needed anymore because of native support
-//    // platformVersion '1.0.1'
-//    filters {
-//        engines {
-//            include 'junit-jupiter'
-//            // include 'junit-vintage'
-//            // exclude 'custom-engine'
-//        }
-//        tags {
-//            // include 'fast'
-//            //exclude 'slow'
-//        }
-//        includeClassNamePattern '^.*Tests?.*$'
-//        //includeClassNamePatterns '.*Tests', '.*Test'
-//        //includeClassNamePatterns '.+'
-//    }
-//    // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
-//    // enableStandardTestTask true
-//    // reportsDir file('build/test-results/junit-platform') // this is the default
-//    //logManager 'org.apache.logging.log4j.jul.LogManager'
-//
-//    details Details.TREE
-//}
 
 
 test {
@@ -205,45 +172,45 @@ test {
     // exclude 'org/boo/**'
 
     // listen to events in the test execution lifecycle
-    beforeTest { descriptor ->
-        logger.lifecycle("\n\n\n===================Running test: {}", descriptor)
+    beforeTest { TestDescriptor desc ->
+        logger.lifecycle('\n\n\n===================Running test: {}', desc)
     }
 
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
     }
 
-    afterSuite { desc, result ->
+    afterSuite { TestDescriptor desc, TestResult result ->
         if (!desc.parent) { // will match the outermost suite
-            logger.lifecycle("\n\n\n===Test summary: {} ({} tests total, {} successes, {} failures, {} skipped)",
+            logger.lifecycle('\n\n\n===================Test summary: {} (\n{} tests total, \n{} successes, \n{} failures, \n{} skipped)',
                     result.resultType, result.testCount, result.successfulTestCount, result.failedTestCount, result.skippedTestCount)
         }
     }
 }
 
-build {
-    doFirst {
-        logger.quiet("Gradle version: {}   buildTime: {}", gradle.gradleVersion, GradleVersion.current().getBuildTime())
-    }
-}
+//build {
+//    doFirst {
+//        logger.quiet('Gradle version: {}   buildTime: {}', GradleVersion.current().toString(), GradleVersion.current().getBuildTime())
+//    }
+//}
+//
+//clean {
+//    doFirst {
+//        logger.quiet('Gradle version: {}   buildTime: {}', GradleVersion.current().toString(), GradleVersion.current().getBuildTime())
+//    }
+//
+//}
 
-clean {
-    doFirst {
-        logger.quiet("Gradle version: {}   buildTime: {}", gradle.gradleVersion, GradleVersion.current().getBuildTime())
-    }
-
-}
-
-jmh {
-    includeTests = false // Allows to include test sources into generate JMH jar, i.e. use it when benchmarks depend on the test classes.
-    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE // Strategy to apply when encountring duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
-
-    fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
-    iterations = 3 // Number of measurement iterations to do.
-    warmupIterations = 3 // Number of warmup iterations to do.
-
-    jmhVersion = "1.21" // Specifies JMH version
-}
+//jmh {
+//    includeTests = false // Allows to include test sources into generate JMH jar, i.e. use it when benchmarks depend on the test classes.
+//    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE // Strategy to apply when encountering duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
+//
+//    fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
+//    iterations = 3 // Number of measurement iterations to do.
+//    warmupIterations = 3 // Number of warmup iterations to do.
+//
+//    jmhVersion = '1.21' // Specifies JMH version
+//}
 
 //task deleteEmptyBmList(type: Delete) {
 //    delete "$buildDir/jmh-generated-classes/META-INF/BenchmarkList"
