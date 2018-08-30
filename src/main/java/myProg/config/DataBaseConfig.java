@@ -169,10 +169,10 @@ public class DataBaseConfig {
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProperties.setProperty("hibernate.generateDdl", "false");
         jpaProperties.setProperty("hibernate.dialect", "myProg.config.Firebird3CustomDialect");
-        jpaProperties.setProperty("hibernate.jdbc.fetch_size", "100");
+        jpaProperties.setProperty("hibernate.jdbc.fetch_size", "50");
 
-        jpaProperties.setProperty("hibernate.id.new_generator_mappings", "true");
-        jpaProperties.setProperty("hibernate.jdbc.batch_size", "10");
+        //jpaProperties.setProperty("hibernate.id.new_generator_mappings", "true");  // in Hibernate 5 enabled by default
+        jpaProperties.setProperty("hibernate.jdbc.batch_size", "20");
 
         emfb.setJpaProperties(jpaProperties);
 
