@@ -84,6 +84,10 @@ dependencies {
 
 
     implementation("org.hibernate:hibernate-core:${hibernateVersion}")
+
+    // https://github.com/marschall/hibernate-batch-sequence-generator
+    implementation('com.github.marschall:hibernate-batch-sequence-generator:1.+')
+
     // compile("org.hibernate:hibernate-java8:${hibernateVersion}") // С версии 5.2 включено в core
 
 

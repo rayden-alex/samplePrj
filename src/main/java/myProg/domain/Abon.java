@@ -5,12 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import static com.github.marschall.hibernate.batchsequencegenerator.BatchSequenceGenerator.FETCH_SIZE_PARAM;
+import static com.github.marschall.hibernate.batchsequencegenerator.BatchSequenceGenerator.SEQUENCE_PARAM;
 
 
 @Entity
@@ -22,12 +27,19 @@ import java.util.Objects;
 @ToString
 
 @XmlRootElement(name = "abon") // JAXB annotation - not working
-@JsonRootName(value = "abon")
 // Jackson annotation - it works depends on precedence of `AnnotationIntrospector's included (Jackson's own vs JAXB).
+@JsonRootName(value = "abon")
 public class Abon {
     @Id
+    @GenericGenerator(
+            name = "abonIdSequence",
+            strategy = "com.github.marschall.hibernate.batchsequencegenerator.BatchSequenceGenerator",
+            parameters = {
+                    @Parameter(name = SEQUENCE_PARAM, value = "ABON_ID_SEQ"),
+                    @Parameter(name = FETCH_SIZE_PARAM, value = "20")
+            })
+    @GeneratedValue(generator = "abonIdSequence")
     @Column(name = "ID", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "REGION")
