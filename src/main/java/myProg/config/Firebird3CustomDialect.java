@@ -7,7 +7,6 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 
 import java.sql.Types;
-import java.util.Locale;
 
 public class Firebird3CustomDialect extends FirebirdDialect {
 
@@ -56,7 +55,7 @@ public class Firebird3CustomDialect extends FirebirdDialect {
 
     @Override
     public boolean supportsPooledSequences() {
-        return false;
+        return true;
     }
 
     /**
@@ -85,7 +84,7 @@ public class Firebird3CustomDialect extends FirebirdDialect {
 
     @Override
     public String getDropSequenceString(String sequenceName) {
-        return "DROP SEQUENCE " + sequenceName.toUpperCase(Locale.ROOT) + "'";
+        return "DROP SEQUENCE " + sequenceName;
     }
 
     @Override
