@@ -82,7 +82,12 @@ dependencies {
     implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
 
-    implementation("org.hibernate:hibernate-core:${hibernateVersion}")
+    implementation 'org.thymeleaf:thymeleaf:3.0.+'
+    implementation 'org.thymeleaf:thymeleaf-spring5:3.0.+'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.+'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.+'
+
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
 
     // https://github.com/marschall/hibernate-batch-sequence-generator
     implementation 'com.github.marschall:hibernate-batch-sequence-generator:1.+'
@@ -129,6 +134,8 @@ dependencies {
     testImplementation(group: 'org.dbunit', name: 'dbunit', version: '+') {
         exclude group: 'junit'
     }
+
+    testImplementation 'org.thymeleaf:thymeleaf-testing:3.0.+'
 
     // JUnit Jupiter API and TestEngine implementation
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"

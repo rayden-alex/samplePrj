@@ -25,10 +25,10 @@ public class AbonController {
     }
 
 
-    @RequestMapping("/")
+    @RequestMapping("/abon")
     @ResponseStatus(code = HttpStatus.OK)
     public String welcome() {//Welcome page, non-rest
-        return "Welcome to RestTemplate Example.";
+        return "Welcome to AbonController Example.";
     }
 
     @GetMapping(
