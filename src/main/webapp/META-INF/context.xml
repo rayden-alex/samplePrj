@@ -12,8 +12,9 @@
 
     НЕ СМОТРЯ НА ТО, что в доках написано не копировать connector-api-1.5.jar в Tomcat/lib,
     БЕЗ НЕГО НЕ РАБОТАЕТ!!!!
+    (копировать не надо только в полноценный JavaEE-сервер, типа GlassFish)
 
-    #If not specified, connections will be validation by the isValid() method.
+    #If not specified, connections will be validation by the isValid() method (supported only in JDBC 4 drivers)
     validationQuery="select 1 from rdb$database"
     -->
     <Resource name="jdbc/AbonDB"
@@ -31,5 +32,11 @@
               defaultAutoCommit="false"
               defaultTransactionIsolation="READ_COMMITTED"/>
 
+    <!--http://tomcat.apache.org/tomcat-8.0-doc/config/jar-scan-filter.html-->
+    <JarScanner>
+        <JarScanFilter
+                pluggabilitySkip="${tomcat.util.scan.StandardJarScanFilter.jarsToSkip},
+                hibernate-*, byte-buddy-*, jackson-*, logback-*, spring-*, jboss-*, thymeleaf-*, jaybird-*"/>
+    </JarScanner>
 
 </Context>
