@@ -29,4 +29,31 @@ public class DispatcherInitializer extends AbstractAnnotationConfigDispatcherSer
         return new String[]{"/"};
     }
 
+    @NonNull
+    @Override
+    protected Filter[] getServletFilters() {
+
+        // Spring filter - set encoding FOR REQUEST AND RESPONSE !
+        final CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(false);
+
+        // converts posted method parameters into HTTP methods
+        // final HiddenHttpMethodFilter httpMethodFilter = new HiddenHttpMethodFilter();
+
+        // Tomcat provided filter:
+        // https://tomcat.apache.org/tomcat-8.5-doc/config/filter.html#Set_Character_Encoding_Filter
+        // https://tomcat.apache.org/tomcat-8.5-doc/config/filter.html#Add_Default_Character_Set_Filter
+        // https://wiki.apache.org/tomcat/FAQ/CharacterEncoding#Q3
+
+        // set encoding APPLIES FOR REQUEST ONLY !
+        // final SetCharacterEncodingFilter characterEncodingFilter = new SetCharacterEncodingFilter();
+        // characterEncodingFilter.setEncoding("UTF-8");
+
+        // Adds a character set for text media types if no ContentType character set is specified APPLIES FOR RESPONSE ONLY !
+        // final AddDefaultCharsetFilter defaultCharsetFilter = new AddDefaultCharsetFilter();
+        // defaultCharsetFilter.setEncoding("UTF-8");
+
+        return new Filter[]{encodingFilter};
+    }
 }
