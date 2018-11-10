@@ -70,8 +70,8 @@ public class DataBaseConfig {
         return ds;
     }
 
-    //@NoProfilesEnabled({"prod", "test"})
-    @Profile("!prod & !test")
+    @NoProfilesEnabled({"prod", "test"})
+    //@Profile("!prod & !test")
     @Bean(name = "dataSource", destroyMethod = "close")
     @SuppressWarnings("Duplicates")
     public org.apache.tomcat.jdbc.pool.DataSource devDataSource() {
