@@ -3,6 +3,7 @@ package myProg.csv.readers;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import myProg.config.AppConfig;
+import myProg.config.DataBaseConfig;
 import myProg.csv.entries.AbonEntry;
 import myProg.csv.processors.AbonEntryProcessor;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -28,14 +29,14 @@ import static org.mockito.Mockito.*;
 
 @ActiveProfiles({"default", "test"})
 @TestPropertySource("classpath:jdbc-test.properties")
-@SpringJUnitConfig(AppConfig.class)
+@SpringJUnitConfig({AppConfig.class, DataBaseConfig.class})
 @ExtendWith(MockitoExtension.class)
-class AbonReaderTest {
+class AbonLoaderTest {
     @Autowired
     private CsvMapper mapperBean;
 
     @Autowired
-    private AbonReader readerBean;
+    private AbonLoader readerBean;
 
     @Autowired
     private DataSource dataSourceBean;
@@ -60,7 +61,7 @@ class AbonReaderTest {
 
     @Test
     void readFromFileMockTest() throws IOException {
-        AbonReader reader = new AbonReader(mapperBean, entryProcessorMock);
+        AbonLoader reader = new AbonLoader(mapperBean, entryProcessorMock);
 
         // реализация мока с подменой НЕ РЕЗУЛЬТАТА вызова метода,
         // а с подменой самой РЕАЛИЗАЦИИ метода
@@ -78,7 +79,7 @@ class AbonReaderTest {
     @Test
     void readFromFileSpyTest() throws IOException {
         // подмена реализации метода через spy-объект
-        AbonReader reader = new AbonReader(mapperBean, entryProcessorStub);
+        AbonLoader reader = new AbonLoader(mapperBean, entryProcessorStub);
 
         reader.readFromFile("d:/ascr/v_20170517174250/abon_test.csv");
         verify(entryProcessorStub, times(52)).process(any(AbonEntry.class));

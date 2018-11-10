@@ -6,6 +6,7 @@ import myProg.csv.entries.AbonEntry;
 import myProg.dto.Address;
 import myProg.dto.CityWithType;
 import myProg.dto.StreetWithType;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,17 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Lazy
 @Slf4j
 @Getter
 public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
-    private Map<String, Short> streetType = new HashMap<>();
-    private Map<String, Short> cityType = new HashMap<>();
-    private Map<StreetWithType, Integer> street = new HashMap<>();
-    private Map<CityWithType, Integer> city = new HashMap<>();
+    private Map<String, Short> streetTypes = new HashMap<>();
+    private Map<String, Short> cityTypes = new HashMap<>();
+    private Map<StreetWithType, Integer> streets = new HashMap<>();
+    private Map<CityWithType, Integer> cities = new HashMap<>();
 
     {
-        streetType.put("НЕТ ДАННЫХ", (short) 1);
-        cityType.put("НЕТ ДАННЫХ", (short) 1);
+        streetTypes.put("НЕТ ДАННЫХ", (short) 1);
+        cityTypes.put("НЕТ ДАННЫХ", (short) 1);
     }
 
     @Override
@@ -36,21 +38,21 @@ public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
         Address address = extractAddress(entry);
 
         if (address.getStreetPref() != null) {
-            streetType.putIfAbsent(address.getStreetPref(), (short) (streetType.size() + 1));
+            streetTypes.putIfAbsent(address.getStreetPref(), (short) (streetTypes.size() + 1));
         }
 
         if (address.getCityPref() != null) {
-            cityType.putIfAbsent(address.getCityPref(), (short) (cityType.size() + 1));
+            cityTypes.putIfAbsent(address.getCityPref(), (short) (cityTypes.size() + 1));
         }
 
         if (address.getCityName() != null) {
-            CityWithType cityWithType = new CityWithType(address.getCityName(), cityType.getOrDefault(address.getCityPref(), (short) 1));
-            city.putIfAbsent(cityWithType, entry.getCityId());
+            CityWithType cityWithType = new CityWithType(address.getCityName(), cityTypes.getOrDefault(address.getCityPref(), (short) 1));
+            cities.putIfAbsent(cityWithType, entry.getCityId());
         }
 
         if (address.getStreetName() != null) {
-            StreetWithType streetWithType = new StreetWithType(address.getStreetName(), streetType.getOrDefault(address.getStreetPref(), (short) 1));
-            street.putIfAbsent(streetWithType, entry.getStreetId());
+            StreetWithType streetWithType = new StreetWithType(address.getStreetName(), streetTypes.getOrDefault(address.getStreetPref(), (short) 1));
+            streets.putIfAbsent(streetWithType, entry.getStreetId());
         }
 
     }
