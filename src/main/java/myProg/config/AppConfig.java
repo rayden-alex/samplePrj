@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 @ComponentScan("myProg.services")
 @Import({
-        DataBaseConfig.class,
+        /* DataBaseConfig.class, */
         CsvConfig.class
         /*, SecurityConfig.class**/})
 public class AppConfig implements EnvironmentAware {
