@@ -10,12 +10,33 @@
 
 <body>
 
+<p th:text="#{choose-locale}">Choose a locale</p>
+<!--/*
+We use dirty tricks to preserve the current url when switching locales
+<ul th:with="currentUrl=(${#httpServletRequest.requestURI + '?' + #strings.defaultString(#httpServletRequest.queryString, '').replaceAll('^lang=[a-z]{2}[&amp;]?', '').replaceAll('&amp;lang=[a-z]{2}', '')})">
+*/-->
+<ul th:with="currentUrl=(${@currentUrlWithoutParam.apply('lang')})">
+    <li>
+        <a th:href="@{${currentUrl}(lang='ru')}">ru</a>
+    </li>
+    <li>
+        <a th:href="@{${currentUrl}(lang='en')}">en</a>
+    </li>
+</ul>
+
+<div>
+    Current locale: <span th:text="${#locale}">ru_RU</span>
+</div>
+
+<p th:text="#{welcome}">Welcome!</p>
+
+
 <div>
     <img src="../../images/stsmlogo.png" alt="STSM logo" title="STSM logo"
          th:src="@{/images/stsmlogo.png}" th:alt-title="#{title.application}"/>
 </div>
-<div> Русский текст</div>
->
+<div> Статичный русский текст</div>
+
 <!--/*@thymesVar id="allRegions" type="java.util.List<myProg.domain.Region>"*/-->
 <div class="regionlist" th:unless="${#lists.isEmpty(allRegions)}">
 
