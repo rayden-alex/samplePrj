@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Lazy
 @Slf4j
+@RequestMapping("/rest")
 public class AbonController {
 
 
