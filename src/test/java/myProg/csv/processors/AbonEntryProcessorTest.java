@@ -29,7 +29,7 @@ class AbonEntryProcessorTest {
         abon.setBuilding("д.21 корп.2");
         abon.setRoom("кв.96");
 
-        Address address = processor.extractAddress(abon);
+        var address = processor.extractAddress(abon);
 
         assertEquals("г.", address.getCityPref());
         assertEquals("Витебск", address.getCityName());

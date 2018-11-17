@@ -99,7 +99,7 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
     @Bean
     public LocaleResolver localeResolver() {
-        CookieLocaleResolver clr = new CookieLocaleResolver();
+        var clr = new CookieLocaleResolver();
         clr.setCookieName("lang");
         return clr;
     }
