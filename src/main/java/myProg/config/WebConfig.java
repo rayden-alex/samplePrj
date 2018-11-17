@@ -118,7 +118,7 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
     @Bean
     public Function<String, String> currentUrlWithoutParam() {
-        return param ->   ServletUriComponentsBuilder.fromCurrentRequest().replaceQueryParam(param).toUriString();
+        return param -> ServletUriComponentsBuilder.fromCurrentRequest().replaceQueryParam(param).toUriString();
     }
 
     /**
@@ -183,7 +183,16 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         return viewResolver;
     }
 
-//    @Bean
+    /**
+     we can register view controllers that create a direct mapping between the URL and the view name using the ViewControllerRegistry.
+     This way, there’s no need for any Controller between the two.
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/login.html");
+    }
+
+    //    @Bean
 //    public InternalResourceViewResolver getInternalResourceViewResolver() {
 //        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 //        resolver.setViewClass(InternalResourceView.class);
