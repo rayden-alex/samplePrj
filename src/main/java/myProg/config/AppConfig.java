@@ -27,13 +27,13 @@ import java.util.Arrays;
 @ComponentScan("myProg.services")
 @Import({
         /* DataBaseConfig.class, */
-        CsvConfig.class
-        /*, SecurityConfig.class**/})
+        CsvConfig.class/*,
+         SecurityConfig.class*/})
 public class AppConfig implements EnvironmentAware {
 
-    static {
-        System.setProperty("management.security.enabled", "false");
-    }
+//    static { // for SpringBoot Actuator
+//        System.setProperty("management.security.enabled", "false");
+//    }
 
 
     @Override
