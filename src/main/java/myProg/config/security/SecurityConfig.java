@@ -1,17 +1,20 @@
 package myProg.config.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
                 // Spring Security should completely ignore URLs starting with /resources/
                 .antMatchers("/css/**", "/images/**");
@@ -23,21 +26,50 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @see myProg.config.WebConfig#addViewControllers
      */
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        // @formatter:off
+        http
+            .authorizeRequests()
                 .antMatchers("/rest/**").permitAll()
-                .antMatchers("/**").access("hasRole('USER')")
-                .antMatchers("/confidential/**").access("hasRole('ADMIN')")
                 .antMatchers("/login*").permitAll()
-                //.anyRequest().authenticated()
-                //.and().formLogin().defaultSuccessUrl("/", false)
-
-                .and().formLogin().loginPage("/login.html").loginProcessingUrl("/perform_login").permitAll()
-                .and().logout().deleteCookies("JSESSIONID").permitAll();
+                //.antMatchers("/**").access("hasRole('USER')")
+                //.antMatchers("/confidential/**").access("hasRole('ADMIN')")
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/login")
+                 // .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/", false)
+                .permitAll()
+                .and()
+            .logout()
+                .logoutUrl("/logout")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll();
+        // @formatter:on
     }
 
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication().withUser("user").password("{noop}user").roles("USER");
+//        auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("ADMIN");
+//    }
+
+//    @Autowired
+//    public void configureGlobal(
+//            AuthenticationManagerBuilder auth) throws Exception {
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser(User.withDefaultPasswordEncoder().username("user").password("password").roles("USER"));
+//    }
+
+    @Bean
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("{noop}user").roles("USER");
-        auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("ADMIN");
+    public UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withDefaultPasswordEncoder().username("user").password("user").roles("USER").build());
+        manager.createUser(User.withDefaultPasswordEncoder().username("admin").password("admin").roles("ADMIN").build());
+        return manager;
     }
 }
