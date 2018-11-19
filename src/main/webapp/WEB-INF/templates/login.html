@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Login page</title>
+    <title th:text="#{login.title}">Login page</title>
 
     <!-- Bootstrap core CSS
     https://getbootstrap.com/docs/4.1/getting-started/introduction/
@@ -18,30 +18,32 @@
 
 <body class="text-center">
 
-<form class="form-login" th:action="perform_login" method="post">
-    <h2 class="form-signin-heading">Please log in</h2>
+<form class="form-login" action="#" th:action="@{/login}" method="post">
+    <h2 class="form-signin-heading" th:text="#{login.heading}">Please log in</h2>
 
-    <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required
-           autofocus>
-    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" name="username" id="inputUsername" class="form-control"
+           th:placeholder="#{login.username.placeholder}" placeholder="Username" required autofocus>
+    <label for="inputUsername" class="sr-only" th:text="#{login.username.placeholder}">Username</label>
 
-    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control"
+           th:placeholder="#{login.password.placeholder}" placeholder="Password" required>
+    <label for="inputPassword" class="sr-only" th:text="#{login.password.placeholder}">Password</label>
 
-    <div th:if="${param.error}" class="alert alert-danger" role="alert">
-        Invalid username or passwordddd.
+    <div th:if="${param.error}" class="alert alert-danger" role="alert"
+         th:text="#{login.error}">
+        Invalid username or password.
     </div>
-    <div th:if="${param.logout}" class="alert alert-info" role="alert">
+    <div th:if="${param.logout}" class="alert alert-info" role="alert"
+         th:text="#{login.logout}">
         You have been logged out.
     </div>
 
     <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
+        <input type="checkbox" id="inputCheckbox" value="remember-me">
+        <label for="inputCheckbox" th:text="#{login.remember.me}"> Remember me </label>
     </div>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{login.submit}">Log in</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2018</p>
 
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
