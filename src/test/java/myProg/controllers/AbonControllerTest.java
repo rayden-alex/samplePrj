@@ -53,7 +53,7 @@ class AbonControllerTest {
 
     @Test
     void welcome() throws Exception {
-        mockMvc.perform(get("/abon"))
+        mockMvc.perform(get("/rest/abon"))
                 .andExpect(status().isOk());
     }
 
@@ -64,7 +64,7 @@ class AbonControllerTest {
 
         mockingAbonService();
 
-        mockMvc.perform(get("/abon/25")
+        mockMvc.perform(get("/rest/abon/25")
                 .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -95,7 +95,7 @@ class AbonControllerTest {
 
         mockingAbonService();
 
-        mockMvc.perform(get("/abon/-100")
+        mockMvc.perform(get("/rest/abon/-100")
                 .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -105,7 +105,7 @@ class AbonControllerTest {
     void abonEntityByIdFound() throws Exception {
         mockingAbonService();
 
-        mockMvc.perform(get("/abonById/25")
+        mockMvc.perform(get("/rest/abonById/25")
                 .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
                 //.andDo(print())
                 .andExpect(status().isOk());
@@ -115,7 +115,7 @@ class AbonControllerTest {
     void abonEntityByIdNotFound() throws Exception {
         mockingAbonService();
 
-        mockMvc.perform(get("/abonById/-100")
+        mockMvc.perform(get("/rest/abonById/-100")
                 .accept(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE)))
                 //.andDo(print())
                 .andExpect(status().isBadRequest());

@@ -18,6 +18,17 @@ h2 {
     margin-bottom: 30px;
 }
 
+div > table th {
+    font-weight: normal;
+    background-color: #ddff77;
+    color: #000000;
+}
+
+div > table td, div > table th {
+    margin: 0;
+    padding: 1px 10px;
+}
+
 form fieldset {
     padding-top: 20px;
 }

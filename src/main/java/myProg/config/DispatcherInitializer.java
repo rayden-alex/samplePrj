@@ -1,5 +1,6 @@
 package myProg.config;
 
+import myProg.config.security.SecurityConfig;
 import org.springframework.lang.NonNull;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -13,14 +14,17 @@ public class DispatcherInitializer extends AbstractAnnotationConfigDispatcherSer
         //"root" application context (non-web infrastructure) configuration
         return new Class<?>[]{
                 AppConfig.class,
-                DataBaseConfig.class
+                DataBaseConfig.class,
+                SecurityConfig.class
         };
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
         //DispatcherServlet application context (Spring MVC infrastructure) configuration
-        return new Class<?>[]{WebConfig.class};
+        return new Class<?>[]{
+                WebConfig.class
+        };
     }
 
     @NonNull

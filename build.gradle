@@ -31,8 +31,8 @@ apply plugin: 'idea'
 apply plugin: 'war'
 
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -94,7 +94,8 @@ dependencies {
 
     // compile("org.hibernate:hibernate-java8:${hibernateVersion}") // С версии 5.2 включено в core
 
-
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
@@ -125,6 +126,8 @@ dependencies {
 
     // ---------------  Testing --------------------
     testImplementation "org.springframework:spring-test:${springVersion}"
+    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
+    
     testImplementation group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
     testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
