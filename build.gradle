@@ -126,6 +126,8 @@ dependencies {
 
     // ---------------  Testing --------------------
     testImplementation "org.springframework:spring-test:${springVersion}"
+    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
+    
     testImplementation group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
     testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
