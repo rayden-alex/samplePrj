@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -163,13 +164,20 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         // SpringTemplateEngine automatically applies SpringStandardDialect and
         // enables Spring's own MessageSource message resolution mechanisms.
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+
         templateEngine.setTemplateResolver(templateResolver());
+
         // Enabling the SpringEL compiler with Spring 4.2.4 or newer can
         // speed up execution in most scenarios, but might be incompatible
         // with specific cases when expressions in one template are reused
         // across different data types, so this flag is "false" by default
         // for safer backwards compatibility.
         templateEngine.setEnableSpringELCompiler(true);
+
+        // add the SpringSecurity dialect to our Template Engine
+        // so that we can use the sec:* attributes and special expression utility objects
+        // https://github.com/thymeleaf/thymeleaf-extras-springsecurity
+        templateEngine.addDialect(new SpringSecurityDialect());
         return templateEngine;
     }
 
@@ -184,12 +192,14 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
     }
 
     /**
-     we can register view controllers that create a direct mapping between the URL and the view name using the ViewControllerRegistry.
-     This way, there’s no need for any Controller between the two.
+     * we can register view controllers that create a direct mapping between the URL and the view name using the ViewControllerRegistry.
+     * This way, there’s no need for any Controller between the two.
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login.html");
+        registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/").setViewName("regionmng");
+        //registry.addViewController("/logout");
     }
 
     //    @Bean
