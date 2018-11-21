@@ -8,8 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
@@ -17,6 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -39,13 +49,52 @@ class WebSecurityTest {
     @MockBean
     RegionService regionService;
 
+    @MockBean
+    UserDetailsService userDetailsService;
+
     @BeforeEach
     void setup() {
+        mockUserDetailService();
+
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(wac)
                 .apply(springSecurity())
                 //.apply(sharedHttpSession())
                 .build();
+    }
+
+    private void mockUserDetailService() {
+        final String user1 = "user";
+        final String pass1 = "{bcrypt}$2a$10$ATY5KQ6vK8QI0hw0DIm2/OntJAN9ZJciCBW.6XFPgDlvHIISFjoYm";
+
+        final String user2 = "admin";
+        final String pass2 = "{bcrypt}$2a$10$LxsYfIB5z.RTlHYj1khiluilUCr756mThc90AwtQyMHpIlw..pGX.";
+
+        UserDetails mockUserDetails1 = new User(
+                user1,
+                pass1,
+                List.of(new SimpleGrantedAuthority("USER")));
+
+        UserDetails mockUserDetails2 = new User(
+                user2,
+                pass2,
+                List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")));
+
+        final Answer<UserDetails> mockedAnswer = invocation -> {
+            Object argument = invocation.getArguments()[0];
+            if (user1.equals(argument)) {
+                return mockUserDetails1;
+
+            } else if (user2.equals(argument)) {
+                return mockUserDetails2;
+
+            } else {
+                throw new UsernameNotFoundException(String.format("User '%s' does not found", argument));
+            }
+        };
+
+        when(userDetailsService.loadUserByUsername(anyString()))
+                .thenAnswer(mockedAnswer);
     }
 
     @Test
@@ -110,6 +159,7 @@ class WebSecurityTest {
     }
 
     @Test
+    //https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#test-method-withmockuser
     @WithMockUser(username = "user1", password = "user1", roles = {"USER1", "ADMIN"})
     void accessSecuredResourceAuthenticatedThenOk() throws Exception {
         mockMvc.perform(get("/regionmng"))
