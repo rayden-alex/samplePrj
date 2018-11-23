@@ -5,6 +5,7 @@ import myProg.config.security.SecurityConfig;
 import myProg.services.AbonService;
 import myProg.services.RegionService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,6 +34,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitWebConfig({WebConfig.class, SecurityConfig.class}) //, AppConfig.class, DataBaseConfig.class
@@ -97,7 +99,9 @@ class WebSecurityTest {
                 .thenAnswer(mockedAnswer);
     }
 
-    @Test
+    @RepeatedTest(3)
+        //  @WithMockUser(username = "user", password = "user", roles = {"USER"})
+        //  @WithUserDetails("customUsername")
     void loginWithValidUserThenAuthenticated() throws Exception {
         /*
          * formLogin() creates a request (including any necessary valid CsrfToken)
@@ -108,7 +112,8 @@ class WebSecurityTest {
                 .password("user");
 
         mockMvc.perform(login)
-                //.andDo(print())
+                .andDo(print())
+                .andExpect(status().isFound())
                 .andExpect(authenticated().withUsername("user"));
     }
 
