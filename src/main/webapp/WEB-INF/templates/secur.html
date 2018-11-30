@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link th:href="@{/css/bootstrap.min.css}" href="../../css/bootstrap.min.css" type="text/css" rel="stylesheet">
+
+    <title>Secured page</title>
+</head>
+
+<body>
+<div class="container">
+    <h1>Spring Security Remember Me Hashing Configuration Example</h1>
+
+    <div sec:authorize="isRememberMe()">
+        The user: <span sec:authentication="name"></span> is logged in by "Remember Me Cookies".
+    </div>
+
+    <div sec:authorize="isFullyAuthenticated()">
+        The user: <span sec:authentication="name"></span> is logged in by "Username / Password".
+    </div>
+</div>
+
+<th:block th:replace="fragments/footer :: footer">
+    <footer> Footer template</footer>
+</th:block>
+
+</body>
+</html>

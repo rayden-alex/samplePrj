@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,13 +20,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -53,6 +58,12 @@ class WebSecurityTest {
 
     @MockBean
     UserDetailsService userDetailsService;
+
+    // when call ".rememberMe().tokenRepository(persistentTokenRepository)"
+    // and "persistentTokenRepository==null" then "createTokenBasedRememberMeServices" called instead of "createPersistentRememberMeServices"
+    // and we don't need "datasource" for test run
+    @MockBean
+    PersistentTokenRepository persistentTokenRepository; // = null
 
     @BeforeEach
     void setup() {
@@ -187,5 +198,41 @@ class WebSecurityTest {
                 .andExpect(redirectedUrl("/login?logout"))
                 .andExpect(cookie().value("JSESSIONID", (String) null));
 
+    }
+
+    @Test
+    void accessProtectedRedirectsToLogin() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(get("/"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getRedirectedUrl()).endsWith("/login");
+    }
+
+    @Test
+    void loginUserValidateLogout() throws Exception {
+        MvcResult mvcResult = this.mockMvc
+                .perform(SecurityMockMvcRequestBuilders.formLogin()
+                        .user("user")
+                        .password("user"))
+                .andExpect(authenticated())
+                .andReturn();
+
+        MockHttpSession httpSession = (MockHttpSession) mvcResult.getRequest().getSession(false);
+
+        assertNotNull(httpSession);
+
+        this.mockMvc
+                .perform(post("/logout")
+                        .with(csrf())
+                        .session(httpSession))
+                .andExpect(unauthenticated())
+                .andExpect(redirectedUrl("/login?logout"));
+
+        this.mockMvc
+                .perform(get("/")
+                        .session(httpSession))
+                .andExpect(unauthenticated())
+                .andExpect(status().is3xxRedirection());
     }
 }

@@ -16,17 +16,29 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
+    private PersistentTokenRepository persistentTokenRepository;
 
     @Autowired
     public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
+    }
+
+    @Autowired
+    public void setPersistentTokenRepository(PersistentTokenRepository persistentTokenRepository) {
+        this.persistentTokenRepository = persistentTokenRepository;
     }
 
     @Override
@@ -48,22 +60,52 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/rest/**").permitAll()
                 .antMatchers("/login*").permitAll()
                 //.antMatchers("/**").access("hasRole('USER')")
-                //.antMatchers("/confidential/**").access("hasRole('ADMIN')")
+                .antMatchers("/secur").access("hasAuthority('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
+
             .formLogin()
                 .loginPage("/login")
                  // .loginProcessingUrl("/perform_login")
                 .defaultSuccessUrl("/", false)
                 .permitAll()
                 .and()
+
             .logout()
+                // If CSRF protection is enabled (default), then the request must also be a POST.
+                // This means that by default POST "/logout" is required to trigger a log out.
+                // If CSRF protection is disabled, then any HTTP method is allowed.
                 .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                 //.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
-                .permitAll();
+                .permitAll()
+                .and()
+
+            .rememberMe()
+                 //.rememberMeParameter("remember-me")
+                 //.key("unique-and-secret")
+                 //.rememberMeCookieName("remember-me")
+                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(2))
+                .userDetailsService(userDetailsService)
+                 //.tokenRepository()
+                .tokenRepository(persistentTokenRepository)
+                //.rememberMeServices(new PersistentTokenBasedRememberMeServices())
+                .and()
+
+            .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler());
         // @formatter:on
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository(DataSource datasource) {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(datasource);
+        tokenRepository.setCreateTableOnStartup(false);
+        return new TransactionalJdbcTokenRepository(tokenRepository);
     }
 
     @Bean
@@ -125,6 +167,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(customAuthenticationProvider());
+        //auth.inMemoryAuthentication().withUser("user").password("{noop}user").roles("USER", "ADMIN");
 
         // https://docs.spring.io/spring-security/site/docs/current/reference/html5/#nsa-authentication
         // https://docs.spring.io/spring-security/site/docs/current/reference/html5/#core-services-authentication-manager
@@ -145,5 +188,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Alternatively, you can disable the eraseCredentialsAfterAuthentication property on ProviderManager
 
         //auth.eraseCredentials(false);
+    }
+    //    @Bean
+//    public LoggingAccessDeniedHandler loggingAccessDeniedHandler() {
+//        return new LoggingAccessDeniedHandler();
+//    }
+//
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
+        handler.setErrorPage("/access-denied");
+        return new LoggingAccessDeniedHandlerDecorator(handler);
     }
 }
