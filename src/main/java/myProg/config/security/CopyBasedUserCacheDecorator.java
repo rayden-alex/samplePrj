@@ -11,6 +11,11 @@ public class CopyBasedUserCacheDecorator implements UserCache {
     public CopyBasedUserCacheDecorator(UserCache delegateCache) {
         this.delegateCache = delegateCache;
     }
+    // If the Authentication contains a reference to an object in the cache (such as a UserDetails instance)
+    // and this has its credentials removed, then it will no longer be possible to authenticate against the cached value.
+    // You need to take this into account if you are using a cache.
+    // An obvious solution is to make a copy of the object first, either in the cache implementation
+    // or in the AuthenticationProvider which creates the returned Authentication object.
 
     @Nullable
     @Override

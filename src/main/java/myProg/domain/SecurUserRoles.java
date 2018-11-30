@@ -1,6 +1,5 @@
 package myProg.domain;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,8 +12,6 @@ import javax.persistence.*;
 @Setter
 @Getter
 @ToString
-
-@JsonRootName(value = "SecurUserRoles")
 
 @Table(name="SECUR_USER_ROLES")
 public class SecurUserRoles {
