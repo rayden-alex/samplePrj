@@ -123,6 +123,7 @@ class AbonServiceImplTest {
         Abon abon = service.findAbonById(25L);
         assertNotNull(abon);
         assertEquals(25L, abon.getId().longValue());
+        assertEquals(33839, abon.getAccount().intValue());
     }
 
     @Test()

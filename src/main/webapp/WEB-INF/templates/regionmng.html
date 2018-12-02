@@ -6,178 +6,196 @@
 <!--https://github.com/thymeleaf/thymeleaf-extras-springsecurity-->
 
 <head>
-    <title>Spring Thyme Seed Starter Менеджер</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link th:href="@{/css/bootstrap.min.css}" href="../../css/bootstrap.min.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="all" href="../../css/stsm.css" th:href="@{/css/stsm.css}"/>
+
+    <title>Spring Thyme Seed Starter Менеджер</title>
 </head>
 
 <body>
 
-<p th:text="#{choose-locale}">Choose a locale</p>
-<!--/*
-We use dirty tricks to preserve the current url when switching locales
-<ul th:with="currentUrl=(${#httpServletRequest.requestURI + '?' + #strings.defaultString(#httpServletRequest.queryString, '').replaceAll('^lang=[a-z]{2}[&amp;]?', '').replaceAll('&amp;lang=[a-z]{2}', '')})">
-*/-->
-<ul th:with="currentUrl=(${@currentUrlWithoutParam.apply('lang')})">
-    <li>
-        <a th:href="@{${currentUrl}(lang='ru')}">ru</a>
-    </li>
-    <li>
-        <a th:href="@{${currentUrl}(lang='en')}">en</a>
-    </li>
-</ul>
+<th:block th:replace="fragments/header :: header">
+    <header> Header template</header>
+</th:block>
 
-<div>
-    Current locale: <span th:text="${#locale}">ru_RU</span>
-</div>
-
-<div>
-    <img src="../../images/stsmlogo.png" alt="STSM logo" title="STSM logo"
-         th:src="@{/images/stsmlogo.png}" th:alt-title="#{title.application}" th:title="#{title.application}"/>
-</div>
-<div> Статичный русский текст</div>
-
+<br>
+<br>
 <div class="container">
-    <div class="logout float-right" th:fragment="logout" sec:authorize="isAuthenticated()">
-        <h2>
-            <span th:text="#{welcome}">Hello, </span>
-            <span th:text="${#httpServletRequest.remoteUser}">user</span> !!!
-        </h2>
-        <!--<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>-->
-        <div sec:authorize="hasRole('USER')">User has role 'USER'</div>
-        Authenticated username: <span sec:authentication="name"></span><br>
-        Authenticated user roles: <span sec:authentication="principal.authorities"></span><br>
-        Logged in: <span sec:authentication="name"></span>
 
-        <div>
-            <form class="form-inline" action="#" th:action="@{/logout}" method="post">
-                <button class="btn btn-sm btn-primary btn-block" type="submit">Logout</button>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            </form>
+    <p th:text="#{choose-locale}">Choose a locale</p>
+    <!--/*
+    We use dirty tricks to preserve the current url when switching locales
+    <ul th:with="currentUrl=(${#httpServletRequest.requestURI + '?' + #strings.defaultString(#httpServletRequest.queryString, '').replaceAll('^lang=[a-z]{2}[&amp;]?', '').replaceAll('&amp;lang=[a-z]{2}', '')})">
+    */-->
+    <ul th:with="currentUrl=(${@currentUrlWithoutParam.apply('lang')})">
+        <li>
+            <a th:href="@{${currentUrl}(lang='ru')}">ru</a>
+        </li>
+        <li>
+            <a th:href="@{${currentUrl}(lang='en')}">en</a>
+        </li>
+    </ul>
+
+    <div>
+        Current locale: <span th:text="${#locale}">ru_RU</span>
+    </div>
+
+    <div>
+        <img src="../../images/stsmlogo.png" alt="STSM logo" title="STSM logo"
+             th:src="@{/images/stsmlogo.png}" th:alt-title="#{title.application}" th:title="#{title.application}"/>
+    </div>
+    <div> Статичный русский текст</div>
+
+    <div class="container">
+        <div th:fragment="logout" sec:authorize="isAuthenticated()">
+            <h2>
+                <span th:text="#{welcome}">Hello, </span>
+                <span th:text="${#httpServletRequest.remoteUser}">user</span> !!!
+            </h2>
+            <!--<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>-->
+            <div sec:authorize="hasRole('USER')">User has role 'USER'</div>
+            Authenticated username: <span sec:authentication="name"></span><br>
+            Authenticated user roles: <span sec:authentication="principal.authorities"></span><br>
+            Logged in: <span sec:authentication="name"></span>
+
+            <div>
+                <form class="form-inline" action="#" th:action="@{/logout}" method="post">
+                    <button class="btn btn-sm btn-primary" type="submit">Logout</button>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                </form>
+            </div>
         </div>
+    </div>
+
+    <!--/*@thymesVar id="allRegions" type="java.util.List<myProg.domain.Region>"*/-->
+    <div class="regionlist" th:unless="${#lists.isEmpty(allRegions)}">
+
+        <h2 th:text="#{title.list}">List of regions</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{region.id}">ID</th>
+                <th th:text="#{region.name}">Name</th>
+                <th th:text="#{region.phonePrefix}">Prefix</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--/*@thymesVar id="rg" type="myProg.domain.Region"*/-->
+            <tr th:each="rg : ${allRegions}">
+                <td th:text="${rg.id}">555</td>
+                <td th:text="${{rg.name}}">ПОЛОЦКИЙ</td>
+                <td th:text="${{rg.phonePrefix}}">0214</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <div>
+
+        <h3 th:text="#{title.new}">Add new Region</h3>
+
+        <!--<form action="#" th:action="@{/regionrmng}" th:object="${region}" method="post">-->
+
+        <!--<fieldset>-->
+
+        <!--<legend th:text="#{seedstarter.data}">Seed Starter Data</legend>-->
+
+        <!--<ul th:if="${#fields.hasErrors('*')}" class="errorlist">-->
+        <!--<li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>-->
+        <!--</ul>-->
+
+
+        <!--<div>-->
+        <!--<label for="datePlanted">-->
+        <!--<span th:text="#{seedstarter.datePlanted}">Date planted</span>-->
+        <!--(<span th:text="#{date.format}">YYYY/MM/DD</span>)-->
+        <!--</label>-->
+        <!--<input type="text" th:field="*{datePlanted}" th:errorclass="fieldError"/>-->
+        <!--</div>-->
+        <!--<div>-->
+        <!--<label th:for="${#ids.next('covered')}" th:text="#{seedstarter.covered}">Covered</label>-->
+        <!--<input type="checkbox" th:field="*{covered}"/>-->
+        <!--</div>-->
+        <!--<div>-->
+        <!--<label for="type" th:text="#{seedstarter.type}">Type</label>-->
+        <!--<select th:field="*{type}">-->
+        <!--<option th:each="type : ${allTypes}" th:value="${type}" th:text="#{${'seedstarter.type.' + type}}">-->
+        <!--Wireframe-->
+        <!--</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--<div>-->
+        <!--<label th:text="#{seedstarter.features}">Features</label>-->
+        <!--<ul>-->
+        <!--<li th:each="feat : ${allFeatures}">-->
+        <!--<input type="checkbox" th:field="*{features}" th:value="${feat}"/>-->
+        <!--<label th:for="${#ids.prev('features')}" th:text="#{${'seedstarter.feature.' + feat}}">Electric-->
+        <!--Heating</label>-->
+        <!--</li>-->
+        <!--<li th:remove="all">-->
+        <!--<input id="removed1" type="checkbox"/> <label for="removed1">Turf</label>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--</div>-->
+
+        <!--<div>-->
+        <!--<label th:text="#{seedstarter.rows}">Rows</label>-->
+        <!--<table>-->
+        <!--<thead>-->
+        <!--<tr>-->
+        <!--<th th:text="#{seedstarter.rows.head.rownum}">Row</th>-->
+        <!--<th th:text="#{seedstarter.rows.head.variety}">Variety</th>-->
+        <!--<th th:text="#{seedstarter.rows.head.seedsPerCell}">Seeds per cell</th>-->
+        <!--<th>-->
+        <!--<button type="submit" name="addRow" th:text="#{seedstarter.row.add}">Add row</button>-->
+        <!--</th>-->
+        <!--</tr>-->
+        <!--</thead>-->
+        <!--<tbody>-->
+        <!--<tr th:each="row,rowStat : *{rows}">-->
+        <!--<td th:text="${rowStat.count}">1</td>-->
+        <!--<td>-->
+        <!--<select th:field="*{rows[__${rowStat.index}__].variety}">-->
+        <!--<option th:each="var : ${allVarieties}" th:value="${var.id}" th:text="${var.name}">-->
+        <!--Thymus Thymi-->
+        <!--</option>-->
+        <!--</select>-->
+        <!--</td>-->
+        <!--<td>-->
+        <!--<input type="text" th:field="*{rows[__${rowStat.index}__].seedsPerCell}"-->
+        <!--th:errorclass="fieldError"/>-->
+        <!--</td>-->
+        <!--<td>-->
+        <!--<button type="submit" name="removeRow" th:value="${rowStat.index}"-->
+        <!--th:text="#{seedstarter.row.remove}">Remove row-->
+        <!--</button>-->
+        <!--</td>-->
+        <!--</tr>-->
+        <!--</tbody>-->
+        <!--</table>-->
+        <!--</div>-->
+
+        <!--<div class="submit">-->
+        <!--<button type="submit" name="save" th:text="#{seedstarter.create}">Add Seed Starter</button>-->
+        <!--</div>-->
+
+        <!--</fieldset>-->
+
+        <!--</form>-->
+
     </div>
 </div>
 
-<!--/*@thymesVar id="allRegions" type="java.util.List<myProg.domain.Region>"*/-->
-<div class="regionlist" th:unless="${#lists.isEmpty(allRegions)}">
-
-    <h2 th:text="#{title.list}">List of regions</h2>
-
-    <table>
-        <thead>
-        <tr>
-            <th th:text="#{region.id}">ID</th>
-            <th th:text="#{region.name}">Name</th>
-            <th th:text="#{region.phonePrefix}">Prefix</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!--/*@thymesVar id="rg" type="myProg.domain.Region"*/-->
-        <tr th:each="rg : ${allRegions}">
-            <td th:text="${rg.id}">555</td>
-            <td th:text="${{rg.name}}">ПОЛОЦКИЙ</td>
-            <td th:text="${{rg.phonePrefix}}">0214</td>
-        </tr>
-        </tbody>
-    </table>
-
-</div>
-
-
-<div>
-
-    <h2 th:text="#{title.new}">Add new Region</h2>
-
-    <!--<form action="#" th:action="@{/regionrmng}" th:object="${region}" method="post">-->
-
-    <!--<fieldset>-->
-
-    <!--<legend th:text="#{seedstarter.data}">Seed Starter Data</legend>-->
-
-    <!--<ul th:if="${#fields.hasErrors('*')}" class="errorlist">-->
-    <!--<li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>-->
-    <!--</ul>-->
-
-
-    <!--<div>-->
-    <!--<label for="datePlanted">-->
-    <!--<span th:text="#{seedstarter.datePlanted}">Date planted</span>-->
-    <!--(<span th:text="#{date.format}">YYYY/MM/DD</span>)-->
-    <!--</label>-->
-    <!--<input type="text" th:field="*{datePlanted}" th:errorclass="fieldError"/>-->
-    <!--</div>-->
-    <!--<div>-->
-    <!--<label th:for="${#ids.next('covered')}" th:text="#{seedstarter.covered}">Covered</label>-->
-    <!--<input type="checkbox" th:field="*{covered}"/>-->
-    <!--</div>-->
-    <!--<div>-->
-    <!--<label for="type" th:text="#{seedstarter.type}">Type</label>-->
-    <!--<select th:field="*{type}">-->
-    <!--<option th:each="type : ${allTypes}" th:value="${type}" th:text="#{${'seedstarter.type.' + type}}">-->
-    <!--Wireframe-->
-    <!--</option>-->
-    <!--</select>-->
-    <!--</div>-->
-    <!--<div>-->
-    <!--<label th:text="#{seedstarter.features}">Features</label>-->
-    <!--<ul>-->
-    <!--<li th:each="feat : ${allFeatures}">-->
-    <!--<input type="checkbox" th:field="*{features}" th:value="${feat}"/>-->
-    <!--<label th:for="${#ids.prev('features')}" th:text="#{${'seedstarter.feature.' + feat}}">Electric-->
-    <!--Heating</label>-->
-    <!--</li>-->
-    <!--<li th:remove="all">-->
-    <!--<input id="removed1" type="checkbox"/> <label for="removed1">Turf</label>-->
-    <!--</li>-->
-    <!--</ul>-->
-    <!--</div>-->
-
-    <!--<div>-->
-    <!--<label th:text="#{seedstarter.rows}">Rows</label>-->
-    <!--<table>-->
-    <!--<thead>-->
-    <!--<tr>-->
-    <!--<th th:text="#{seedstarter.rows.head.rownum}">Row</th>-->
-    <!--<th th:text="#{seedstarter.rows.head.variety}">Variety</th>-->
-    <!--<th th:text="#{seedstarter.rows.head.seedsPerCell}">Seeds per cell</th>-->
-    <!--<th>-->
-    <!--<button type="submit" name="addRow" th:text="#{seedstarter.row.add}">Add row</button>-->
-    <!--</th>-->
-    <!--</tr>-->
-    <!--</thead>-->
-    <!--<tbody>-->
-    <!--<tr th:each="row,rowStat : *{rows}">-->
-    <!--<td th:text="${rowStat.count}">1</td>-->
-    <!--<td>-->
-    <!--<select th:field="*{rows[__${rowStat.index}__].variety}">-->
-    <!--<option th:each="var : ${allVarieties}" th:value="${var.id}" th:text="${var.name}">-->
-    <!--Thymus Thymi-->
-    <!--</option>-->
-    <!--</select>-->
-    <!--</td>-->
-    <!--<td>-->
-    <!--<input type="text" th:field="*{rows[__${rowStat.index}__].seedsPerCell}"-->
-    <!--th:errorclass="fieldError"/>-->
-    <!--</td>-->
-    <!--<td>-->
-    <!--<button type="submit" name="removeRow" th:value="${rowStat.index}"-->
-    <!--th:text="#{seedstarter.row.remove}">Remove row-->
-    <!--</button>-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--</tbody>-->
-    <!--</table>-->
-    <!--</div>-->
-
-    <!--<div class="submit">-->
-    <!--<button type="submit" name="save" th:text="#{seedstarter.create}">Add Seed Starter</button>-->
-    <!--</div>-->
-
-    <!--</fieldset>-->
-
-    <!--</form>-->
-
-</div>
+<th:block th:replace="fragments/footer :: footer">
+    <footer> Footer template</footer>
+</th:block>
 
 </body>
 </html>

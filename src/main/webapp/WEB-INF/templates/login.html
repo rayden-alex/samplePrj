@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <title th:text="#{login.title}">Login page</title>
 
@@ -39,7 +39,7 @@
     </div>
 
     <div class="checkbox mb-3">
-        <input type="checkbox" id="inputCheckbox" value="remember-me">
+        <input type="checkbox" id="inputCheckbox" name="remember-me">
         <label for="inputCheckbox" th:text="#{login.remember.me}"> Remember me </label>
     </div>
 

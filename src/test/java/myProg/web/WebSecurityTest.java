@@ -5,24 +5,41 @@ import myProg.config.security.SecurityConfig;
 import myProg.services.AbonService;
 import myProg.services.RegionService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitWebConfig({WebConfig.class, SecurityConfig.class}) //, AppConfig.class, DataBaseConfig.class
@@ -39,8 +56,19 @@ class WebSecurityTest {
     @MockBean
     RegionService regionService;
 
+    @MockBean
+    UserDetailsService userDetailsService;
+
+    // when call ".rememberMe().tokenRepository(persistentTokenRepository)"
+    // and "persistentTokenRepository==null" then "createTokenBasedRememberMeServices" called instead of "createPersistentRememberMeServices"
+    // and we don't need "datasource" for test run
+    @MockBean
+    PersistentTokenRepository persistentTokenRepository; // = null
+
     @BeforeEach
     void setup() {
+        mockUserDetailService();
+
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(wac)
                 .apply(springSecurity())
@@ -48,7 +76,43 @@ class WebSecurityTest {
                 .build();
     }
 
-    @Test
+    private void mockUserDetailService() {
+        final String user1 = "user";
+        final String pass1 = "{bcrypt}$2a$10$ATY5KQ6vK8QI0hw0DIm2/OntJAN9ZJciCBW.6XFPgDlvHIISFjoYm";
+
+        final String user2 = "admin";
+        final String pass2 = "{bcrypt}$2a$10$LxsYfIB5z.RTlHYj1khiluilUCr756mThc90AwtQyMHpIlw..pGX.";
+
+        UserDetails mockUserDetails1 = new User(
+                user1,
+                pass1,
+                List.of(new SimpleGrantedAuthority("USER")));
+
+        UserDetails mockUserDetails2 = new User(
+                user2,
+                pass2,
+                List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")));
+
+        final Answer<UserDetails> mockedAnswer = invocation -> {
+            Object argument = invocation.getArguments()[0];
+            if (user1.equals(argument)) {
+                return mockUserDetails1;
+
+            } else if (user2.equals(argument)) {
+                return mockUserDetails2;
+
+            } else {
+                throw new UsernameNotFoundException(String.format("User '%s' does not found", argument));
+            }
+        };
+
+        when(userDetailsService.loadUserByUsername(anyString()))
+                .thenAnswer(mockedAnswer);
+    }
+
+    @RepeatedTest(3)
+        //  @WithMockUser(username = "user", password = "user", roles = {"USER"})
+        //  @WithUserDetails("customUsername")
     void loginWithValidUserThenAuthenticated() throws Exception {
         /*
          * formLogin() creates a request (including any necessary valid CsrfToken)
@@ -59,7 +123,8 @@ class WebSecurityTest {
                 .password("user");
 
         mockMvc.perform(login)
-                //.andDo(print())
+                .andDo(print())
+                .andExpect(status().isFound())
                 .andExpect(authenticated().withUsername("user"));
     }
 
@@ -110,6 +175,7 @@ class WebSecurityTest {
     }
 
     @Test
+    //https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#test-method-withmockuser
     @WithMockUser(username = "user1", password = "user1", roles = {"USER1", "ADMIN"})
     void accessSecuredResourceAuthenticatedThenOk() throws Exception {
         mockMvc.perform(get("/regionmng"))
@@ -132,5 +198,41 @@ class WebSecurityTest {
                 .andExpect(redirectedUrl("/login?logout"))
                 .andExpect(cookie().value("JSESSIONID", (String) null));
 
+    }
+
+    @Test
+    void accessProtectedRedirectsToLogin() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(get("/"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getRedirectedUrl()).endsWith("/login");
+    }
+
+    @Test
+    void loginUserValidateLogout() throws Exception {
+        MvcResult mvcResult = this.mockMvc
+                .perform(SecurityMockMvcRequestBuilders.formLogin()
+                        .user("user")
+                        .password("user"))
+                .andExpect(authenticated())
+                .andReturn();
+
+        MockHttpSession httpSession = (MockHttpSession) mvcResult.getRequest().getSession(false);
+
+        assertNotNull(httpSession);
+
+        this.mockMvc
+                .perform(post("/logout")
+                        .with(csrf())
+                        .session(httpSession))
+                .andExpect(unauthenticated())
+                .andExpect(redirectedUrl("/login?logout"));
+
+        this.mockMvc
+                .perform(get("/")
+                        .session(httpSession))
+                .andExpect(unauthenticated())
+                .andExpect(status().is3xxRedirection());
     }
 }
