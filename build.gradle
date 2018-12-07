@@ -1,25 +1,25 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-}
-
-plugins {
-    // Gradle-apt-plugin
-    // id 'net.ltgt.apt' version '0.18'
-
-    // https://habrahabr.ru/post/345520/
-    // https://github.com/tbroyer/gradle-apt-plugin
-    // https://github.com/tbroyer/gradle-apt-plugin/issues/87
-    // with Gradle 4.9 (and 4.8, back to 4.6), it basically only configures the options.annotationProcessorGeneratedSourcesDirectory
-    // of the JavaCompile tasks (it also adds the various DSLs, and the legacy apt configurations),
-    // as everything required (annotationProcessor configurations, etc.) is provided by Gradle proper.
-    // If you don't use the plugin's DSL, try removing the plugin and run your build again;
-    // the only difference would be that no generated source is written to disk.
-
-    // JMH Gradle Plugin
-    // id 'me.champeau.gradle.jmh' version '0.4.7'  //https://github.com/melix/jmh-gradle-plugin
-}
+//buildscript {
+//    repositories {
+//        jcenter()
+//    }
+//}
+//
+//plugins {
+//    // Gradle-apt-plugin
+//     id 'net.ltgt.apt-idea' version '0.19'
+//
+//    // https://habrahabr.ru/post/345520/
+//    // https://github.com/tbroyer/gradle-apt-plugin
+//    // https://github.com/tbroyer/gradle-apt-plugin/issues/87
+//    // with Gradle 4.9 (and 4.8, back to 4.6), it basically only configures the options.annotationProcessorGeneratedSourcesDirectory
+//    // of the JavaCompile tasks (it also adds the various DSLs, and the legacy apt configurations),
+//    // as everything required (annotationProcessor configurations, etc.) is provided by Gradle proper.
+//    // If you don't use the plugin's DSL, try removing the plugin and run your build again;
+//    // the only difference would be that no generated source is written to disk.
+//
+//    // JMH Gradle Plugin
+//    // id 'me.champeau.gradle.jmh' version '0.4.7'  //https://github.com/melix/jmh-gradle-plugin
+//}
 
 group 'samples'
 version '1.0-SNAPSHOT'
@@ -27,6 +27,8 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+
+//apply plugin: 'net.ltgt.apt-idea'
 
 apply plugin: 'war'
 
@@ -59,6 +61,8 @@ ext {
     springDataJPAVersion = '2.1.2.RELEASE'
 
     hibernateVersion = '5.3.7.Final'
+
+    mapStructVersion = "1.3.0.Beta2"
 }
 
 configurations.all {
@@ -71,6 +75,14 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.+'
     annotationProcessor 'org.projectlombok:lombok:1.+'
     testAnnotationProcessor 'org.projectlombok:lombok:1.+'
+
+
+    // "compile" needed! With "compileOnly" Gradle-Test failed with "ClassNotFoundException: org.mapstruct.factory.Mappers"
+    // (хотя тесты из идейки проходят нормально, хм...)
+    // "testCompile" and "testAnnotationProcessor" needed ONLY when CREATE "Mappers" in "test" module.
+    // They are NOT NEEDED when only use already created Mapper classes in "main" module
+    compile "org.mapstruct:mapstruct:${mapStructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
 
 
     implementation "org.springframework:spring-context:${springVersion}"
@@ -95,7 +107,7 @@ dependencies {
     // compile("org.hibernate:hibernate-java8:${hibernateVersion}") // С версии 5.2 включено в core
 
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    
+
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
@@ -127,7 +139,7 @@ dependencies {
     // ---------------  Testing --------------------
     testImplementation "org.springframework:spring-test:${springVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    
+
     testImplementation group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
     testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
@@ -160,7 +172,6 @@ dependencies {
     // jmh 'org.openjdk.jmh:jmh-core:1.21'
     // jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.21'
 }
-
 
 
 test {
@@ -233,5 +244,31 @@ test {
 //}
 //jmhCompileGeneratedClasses.finalizedBy deleteEmptyBmList
 
+compileJava {
+    options.compilerArgs = [
+            '-Amapstruct.suppressGeneratorTimestamp=true',
+            '-Amapstruct.suppressGeneratorVersionInfoComment=true'
+    ]
+
+
+//    // https://github.com/gradle/gradle/issues/4956
+//    // https://youtrack.jetbrains.com/issue/IDEA-182577
+//    // https://github.com/tbroyer/gradle-apt-plugin#do-without-the-plugin
+//
+//    String relativePath = "build/generated/source/apt/main"
+//    sourceSets.main.java { srcDir relativePath }
+//    File generatedSourceDir = project.file("build/generated/source/apt/main")
+//    println "Creating and configuring generated source directory $generatedSourceDir"
+//    project.mkdir(generatedSourceDir)
+//    options.annotationProcessorGeneratedSourcesDirectory = generatedSourceDir
+//    outputs.dir(generatedSourceDir)
+//
+//    doFirst {
+//        // force a clean of generatedSourceDir to prevent java.lang.IllegalStateException: endPosTable already set.
+//        // This shouldn't be need if using Gradle 4.8+ or Java 9+.
+//        project.delete(generatedSourceDir)
+//        project.mkdir(generatedSourceDir)
+//    }
+}
 
 
