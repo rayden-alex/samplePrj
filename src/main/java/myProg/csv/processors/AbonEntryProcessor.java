@@ -2,10 +2,10 @@ package myProg.csv.processors;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import myProg.csv.dto.Address;
+import myProg.csv.dto.CityWithType;
+import myProg.csv.dto.StreetWithType;
 import myProg.csv.entries.AbonEntry;
-import myProg.dto.Address;
-import myProg.dto.CityWithType;
-import myProg.dto.StreetWithType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

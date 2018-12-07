@@ -1,4 +1,4 @@
-package myProg.dto;
+package myProg.csv.dto;
 
 import lombok.Value;
 
