@@ -1,7 +1,7 @@
 package myProg.csv.processors;
 
+import myProg.csv.dto.Address;
 import myProg.csv.entries.AbonEntry;
-import myProg.dto.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
