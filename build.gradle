@@ -108,23 +108,23 @@ dependencies {
 
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.+'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.+'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.+'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.+'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.+'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.+'
     // for REST produces
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.+'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.+'
 
 
-    providedCompile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.5.34'
-    providedCompile group: 'org.apache.tomcat', name: 'tomcat-dbcp', version: '8.5.34'
+    providedCompile 'org.apache.tomcat:tomcat-jdbc:8.5.34'
+    providedCompile 'org.apache.tomcat:tomcat-dbcp:8.5.34'
 
     // -----------------  Database ------------------
     // provided, т.к. оба файла все равно закинуты в Tomcat/lib
-    providedCompile group: 'org.firebirdsql.jdbc', name: 'jaybird-jdk18', version: '3.+'
-    //providedCompile group: 'javax.resource', name: 'connector-api', version: '1.5'
+    providedCompile 'org.firebirdsql.jdbc:jaybird-jdk18:3.+'
+    //providedCompile 'javax.resource:connector-api:1.5'
 
 
-    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.+'
+    providedCompile 'javax.servlet:javax.servlet-api:3.+'
 
     // It is not necessary nor recommended to add JSR 305 dependency in project classpath
     // to take advantage of Spring null-safe API. Only projects like Spring-based libraries
@@ -133,20 +133,20 @@ dependencies {
     //    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
     // ---------------   Logging -------------------
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.+'
+    implementation 'org.slf4j:slf4j-api:1.7.+'
+    implementation 'ch.qos.logback:logback-classic:1.2.+'
 
     // ---------------  Testing --------------------
     testImplementation "org.springframework:spring-test:${springVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
 
-    testImplementation group: 'com.github.springtestdbunit', name: 'spring-test-dbunit', version: '1.+'
-    testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.+'
-    testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.+'
+    testImplementation 'com.github.springtestdbunit:spring-test-dbunit:1.+'
+    testImplementation 'com.jayway.jsonpath:json-path:2.+'
+    testImplementation 'org.hamcrest:hamcrest-library:1.+'
 
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.+'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.+'
-    testImplementation(group: 'org.dbunit', name: 'dbunit', version: '+') {
+    testImplementation 'org.mockito:mockito-core:2.+'
+    testImplementation 'org.mockito:mockito-junit-jupiter:2.+'
+    testImplementation('org.dbunit:dbunit:+') {
         exclude group: 'junit'
     }
 
@@ -162,7 +162,7 @@ dependencies {
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.+'
+    testImplementation 'org.assertj:assertj-core:3.+'
     //testCompile 'org.assertj:assertj-db:1.2.0'
 
     // https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
