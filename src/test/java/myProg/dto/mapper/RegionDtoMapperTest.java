@@ -11,6 +11,9 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(RegionDtoMapperTest.TestConfig.class)
+// This test works with "Delegate IDE build/run actions to Gradle" options only
+// Something wrong with MapStruct annotation processor generated code when option is off
+// and Spring could't create and find  RegionDtoMapper bean
 class RegionDtoMapperTest {
 
     @Configuration
@@ -18,6 +21,12 @@ class RegionDtoMapperTest {
     static class TestConfig {
         // NO code needed here!
         // Only for @Configuration and @ComponentScan annotation used
+        //
+        // And avoid this error:
+        // "[AnnotationConfigContextLoaderUtils] - Could not detect default configuration classes
+        // for test class [myProg.dto.mapper.RegionDtoMapperTest]:
+        // RegionDtoMapperTest does not declare any static, non-private, non-final,
+        // nested classes annotated with @Configuration.
     }
 
     // False-positive IDEA inspection "Could not Autowire. No Beans of ... found"
