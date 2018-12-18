@@ -52,6 +52,10 @@
 
     </appender>
 
+    <logger name="myProg.config.security" level="debug" additivity="true">
+        <appender-ref ref="FILE-AUDIT"/>
+    </logger>
+
     <logger name="myProg" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
