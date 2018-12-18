@@ -1,9 +1,11 @@
 package myProg.config.security;
 
+import myProg.config.security.aspect.AccessDeniedLoggingAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSecurity
+@EnableAspectJAutoProxy
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
@@ -199,6 +202,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AccessDeniedHandler accessDeniedHandler() {
         AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
         handler.setErrorPage("/access-denied");
-        return new LoggingAccessDeniedHandlerDecorator(handler);
+        //return new LoggingAccessDeniedHandlerDecorator(handler);
+        return handler;
+    }
+
+    @Bean
+    public AccessDeniedLoggingAspect accessDeniedLoggingAspect() {
+        return new AccessDeniedLoggingAspect();
     }
 }
