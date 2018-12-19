@@ -59,6 +59,7 @@ ext {
     springVersion = '5.1.2.RELEASE'
     springSecurityVersion = '5.1.1.RELEASE'
     springDataJPAVersion = '2.1.2.RELEASE'
+    springBootTestVersion = '2.1.0.RELEASE'
 
     hibernateVersion = '5.3.7.Final'
 
@@ -86,6 +87,7 @@ dependencies {
 
 
     implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-aspects:${springVersion}"
     implementation "org.springframework:spring-orm:${springVersion}"
     implementation "org.springframework.data:spring-data-jpa:${springDataJPAVersion}"
     implementation "org.springframework:spring-webmvc:${springVersion}"
@@ -166,7 +168,7 @@ dependencies {
     //testCompile 'org.assertj:assertj-db:1.2.0'
 
     // https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
-    testImplementation 'org.springframework.boot:spring-boot-test:+'
+    testImplementation "org.springframework.boot:spring-boot-test:${springBootTestVersion}"
 
     // ========== JMH micro-benchmarking framework ====================
     // jmh 'org.openjdk.jmh:jmh-core:1.21'

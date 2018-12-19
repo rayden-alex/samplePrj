@@ -1,6 +1,5 @@
 package myProg.csv.processors;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import myProg.csv.dto.Address;
 import myProg.csv.dto.CityWithType;
@@ -11,15 +10,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Lazy
 @Slf4j
-@Getter
 public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
     private Map<String, Short> streetTypes = new HashMap<>();
     private Map<String, Short> cityTypes = new HashMap<>();
@@ -120,5 +115,20 @@ public class AbonEntryProcessor implements EntryProcessor<AbonEntry> {
         return result;
     }
 
+    public Map<String, Short> getStreetTypes() {
+        return Collections.unmodifiableMap(streetTypes);
+    }
+
+    public Map<String, Short> getCityTypes() {
+        return Collections.unmodifiableMap(cityTypes);
+    }
+
+    public Map<StreetWithType, Integer> getStreets() {
+        return Collections.unmodifiableMap(streets);
+    }
+
+    public Map<CityWithType, Integer> getCities() {
+        return Collections.unmodifiableMap(cities);
+    }
 }
 
