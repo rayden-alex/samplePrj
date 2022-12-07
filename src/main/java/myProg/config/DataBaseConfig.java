@@ -5,11 +5,13 @@ import myProg.dao.MyJpaRepositoryImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
@@ -20,7 +22,13 @@ import java.util.Properties;
 @Slf4j
 @Configuration
 @Lazy
-@EnableJpaRepositories(basePackages = "myProg.dao", repositoryBaseClass = MyJpaRepositoryImpl.class)
+@EnableJpaRepositories(
+        basePackages = "myProg.dao",
+        repositoryBaseClass = MyJpaRepositoryImpl.class,
+        // Bootstraps Spring Data JPA in DEFERRED mode
+        // https://github.com/spring-projects/spring-data-examples/tree/master/jpa/deferred
+        bootstrapMode = BootstrapMode.DEFERRED)
+
 @EnableTransactionManagement
 @PropertySource("classpath:jdbc.properties") //${my.placeholder:default/path}
 public class DataBaseConfig {
@@ -176,6 +184,15 @@ public class DataBaseConfig {
         jpaProperties.setProperty("hibernate.jdbc.batch_size", "20");
 
         emfb.setJpaProperties(jpaProperties);
+
+        // Enable JPA initialization in a background thread
+        // Repository initialization is eventually triggered on ContextRefreshedEvent
+        // https://github.com/spring-projects/spring-data-examples/tree/master/jpa/deferred
+        // https://jira.spring.io/browse/SPR-13732
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setDaemon(true);
+        taskExecutor.afterPropertiesSet();
+        emfb.setBootstrapExecutor(taskExecutor);
 
         return emfb;
     }

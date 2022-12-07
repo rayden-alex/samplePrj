@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -34,5 +35,14 @@ public class RegionController {
     public String showRegions(Model model) {
         //model.addAttribute("allRegions", regionService.findAll());
         return "regionmng";
+    }
+    @RequestMapping({"/logout"})
+    public String logout() {
+        return "login";
+    }
+
+    @RequestMapping({"/login"})
+    public String login() {
+        return "login";
     }
 }

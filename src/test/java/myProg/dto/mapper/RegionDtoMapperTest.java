@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(RegionDtoMapperTest.TestConfig.class)
 // This test works with "Delegate IDE build/run actions to Gradle" options only
 // Something wrong with MapStruct annotation processor generated code when option is off
-// and Spring could't create and find  RegionDtoMapper bean
+// and Spring couldn't create and find  RegionDtoMapper bean
 class RegionDtoMapperTest {
 
     @Configuration
